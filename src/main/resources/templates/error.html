@@ -2,12 +2,12 @@
 <html lang="ja" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>EduCast</title>
+    <title>Error</title>
 </head>
 <body>
-<div th:if="${isInstructor}">Instructor</div>
-<div th:if="${channel}">
-    <p th:text="${channel.contextId}"/>
+<h2 th:if="${title}" th:text="${title}"/>
+<div th:if="${message}">
+    <p th:text="${message}"/>
 </div>
 
 </body>

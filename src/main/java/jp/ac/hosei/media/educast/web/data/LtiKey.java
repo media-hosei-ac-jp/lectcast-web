@@ -1,15 +1,18 @@
 package jp.ac.hosei.media.educast.web.data;
 
+import org.codehaus.jackson.annotate.JsonAnyGetter;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class LtiKey {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String key;
@@ -18,6 +21,7 @@ public class LtiKey {
 
     private String description;
 
+    @NotNull
     public Integer getId() {
         return id;
     }
@@ -26,6 +30,7 @@ public class LtiKey {
         this.id = id;
     }
 
+    @NotNull
     public String getKey() {
         return key;
     }
@@ -34,6 +39,7 @@ public class LtiKey {
         this.key = key;
     }
 
+    @NotNull
     public String getSecret() {
         return secret;
     }
