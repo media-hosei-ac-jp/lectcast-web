@@ -26,15 +26,16 @@ ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 CREATE TABLE IF NOT EXISTS `item` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `channel_id` INT NOT NULL,
-  `guid` VARCHAR(64) NOT NULL,
-  `key` VARCHAR(64) NOT NULL,
-  `title` VARCHAR(64) NOT NULL,
-  `description` TEXT(2048) NULL,
-  `duration` INT UNSIGNED NOT NULL,
+  `guid` VARCHAR(64) DEFAULT NULL,
+  `s3_key` VARCHAR(64) NOT NULL DEFAULT "",
+  `title` VARCHAR(64) NOT NULL DEFAULT "",
+  `description` TEXT(2048) DEFAULT NULL,
+  `duration` INT UNSIGNED NOT NULL DEFAULT 0,
   `explicit` TINYINT(1) NOT NULL DEFAULT 0,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE INDEX (`s3_key`),
   INDEX `fk_items_channels_idx` (`channel_id` ASC) VISIBLE,
   CONSTRAINT `fk_items_channels`
     FOREIGN KEY (`channel_id`)

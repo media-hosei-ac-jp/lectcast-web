@@ -5,27 +5,26 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
-public class Channel {
+public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String contextId;
+    private Integer channelId;
 
-    private String resourceLinkId;
+    private String guid;
+
+    @Column(name = "s3_key")
+    private String s3Key;
 
     private String title;
 
-    private String author;
-
     private String description;
 
+    private int duration;
+
     private int explicit;
-
-    private String image;
-
-    private String language;
 
     private Date createdAt;
 
@@ -40,21 +39,29 @@ public class Channel {
     }
 
     @NotNull
-    public String getContextId() {
-        return contextId;
+    public Integer getChannelId() {
+        return channelId;
     }
 
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
+    public void setChannelId(Integer channelId) {
+        this.channelId = channelId;
+    }
+
+    public String getGuid() {
+        return guid;
+    }
+
+    public void setGuid(String guid) {
+        this.guid = guid;
     }
 
     @NotNull
-    public String getResourceLinkId() {
-        return resourceLinkId;
+    public String getS3Key() {
+        return s3Key;
     }
 
-    public void setResourceLinkId(String resourceLinkId) {
-        this.resourceLinkId = resourceLinkId;
+    public void setS3Key(String s3Key) {
+        this.s3Key = s3Key;
     }
 
     @NotNull
@@ -66,14 +73,6 @@ public class Channel {
         this.title = title;
     }
 
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -82,28 +81,20 @@ public class Channel {
         this.description = description;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
     public int getExplicit() {
         return explicit;
     }
 
     public void setExplicit(int explicit) {
         this.explicit = explicit;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
 
     @NotNull

@@ -2,6 +2,8 @@ package jp.ac.hosei.media.educast.web.controller;
 
 import com.amazonaws.services.cloudfront.CloudFrontUrlSigner;
 import com.amazonaws.services.cloudfront.util.SignerUtils;
+import jp.ac.hosei.media.educast.web.data.Item;
+import jp.ac.hosei.media.educast.web.repository.ItemRepository;
 import jp.ac.hosei.media.educast.web.service.AmazonS3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +34,10 @@ public class FileController {
     private String keyPairId;
 
     @Autowired
-    AmazonS3Service amazonS3Service;
+    private AmazonS3Service amazonS3Service;
+
+    @Autowired
+    private ItemRepository itemRepository;
 
     @GetMapping
     public String index() {
@@ -45,7 +50,8 @@ public class FileController {
     }
 
     @PostMapping
-    public String handleFileUpload(final MultipartFile multipartFile) {
+    public String handleFileUpload(@RequestParam final MultipartFile multipartFile, @RequestParam final String title) {
+        final Item item = new Item();
         File file = null;
         try {
             // Create a temporary file
@@ -57,8 +63,14 @@ public class FileController {
             uploadFileStream.write(bytes);
             uploadFileStream.close();
 
-            // Put an object
-            amazonS3Service.putObject(file, "files/", multipartFile.getContentType(), multipartFile.getSize(), 600);
+            // Put an audio object
+            final String key = amazonS3Service.putObject(file, "files/", multipartFile.getContentType(), multipartFile.getSize(), 600);
+
+            // Persist item object
+            item.setChannelId(1);
+            item.setTitle(title);
+            item.setS3Key(key);
+            itemRepository.save(item);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

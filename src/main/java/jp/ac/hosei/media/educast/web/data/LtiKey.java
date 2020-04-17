@@ -21,7 +21,6 @@ public class LtiKey {
 
     private String description;
 
-    @NotNull
     public Integer getId() {
         return id;
     }

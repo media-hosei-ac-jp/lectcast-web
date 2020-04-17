@@ -1,7 +1,9 @@
 package jp.ac.hosei.media.educast.web.controller;
 
 import jp.ac.hosei.media.educast.web.data.Channel;
+import jp.ac.hosei.media.educast.web.data.Item;
 import jp.ac.hosei.media.educast.web.repository.ChannelRepository;
+import jp.ac.hosei.media.educast.web.repository.ItemRepository;
 import org.imsglobal.aspect.Lti;
 import org.imsglobal.lti.launch.LtiLaunch;
 import org.imsglobal.lti.launch.LtiVerificationResult;
@@ -17,6 +19,9 @@ public class LTILaunchController {
 
     @Autowired
     private ChannelRepository channelRepository;
+
+    @Autowired
+    private ItemRepository itemRepository;
 
     @Lti
     @PostMapping(path = "/launch")
@@ -40,6 +45,9 @@ public class LTILaunchController {
                 channel.setTitle("");   // Set default value
                 channelRepository.save(channel);
             }
+        } else {
+            final Iterable<Item> items = itemRepository.findAllByChannelId(channel.getId());
+            model.addAttribute("items", items);
         }
 
         model.addAttribute("isInstructor", isInstructor);

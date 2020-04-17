@@ -35,11 +35,11 @@ public class AmazonS3Service {
     @Value("${aws.bucketName}")
     private String bucketName;
 
-    public String putObject(final File file, final String suffix, final String contentType,
+    public String putObject(final File file, final String prefix, final String contentType,
                             final long contentLength, final int maxAge) {
         try {
             final InputStream inputStream = new FileInputStream(file);
-            final String key = suffix + UUID.randomUUID().toString();
+            final String key = prefix + UUID.randomUUID().toString();
             final ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(contentType);
             objectMetadata.setContentLength(contentLength);
