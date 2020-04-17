@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS `lti_key` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `key` VARCHAR(64) NOT NULL,
+  `secret` VARCHAR(64) NOT NULL,
+  `description` VARCHAR(64) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `key_UNIQUE` (`key` ASC) VISIBLE)
+ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
