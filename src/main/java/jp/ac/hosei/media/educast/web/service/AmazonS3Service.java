@@ -39,12 +39,12 @@ public class AmazonS3Service {
                             final long contentLength, final int maxAge) {
         try {
             final InputStream inputStream = new FileInputStream(file);
-            final String key = prefix + UUID.randomUUID().toString();
+            final String key = UUID.randomUUID().toString();
             final ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(contentType);
             objectMetadata.setContentLength(contentLength);
             objectMetadata.setCacheControl("public, max-age=" + maxAge);
-            getAmazonS3().putObject(bucketName, key, inputStream, objectMetadata);
+            getAmazonS3().putObject(bucketName, prefix + key, inputStream, objectMetadata);
             return key;
         } catch (final Exception e) {
             throw new RuntimeException(e);

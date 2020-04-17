@@ -19,7 +19,7 @@
 
     <div class="row" th:if="${items}">
         <div class="col-12" th:each="item : ${items}">
-            <p th:text="${item.s3Key}"/>
+            <a href="#" th:href="${@amazonCloudFrontService.getSignedUrl(item.s3Key)}"><span th:text="${item.title}"/></a>
         </div>
     </div>
 
