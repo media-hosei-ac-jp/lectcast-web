@@ -19,11 +19,15 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    implementation 'mysql:mysql-connector-java'
+    implementation group: 'org.imsglobal', name: 'basiclti-util', version: '1.2.0'
 
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.762')
     implementation 'com.amazonaws:aws-java-sdk-s3'

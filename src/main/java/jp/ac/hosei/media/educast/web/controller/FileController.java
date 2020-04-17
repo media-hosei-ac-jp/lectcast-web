@@ -2,10 +2,9 @@ package jp.ac.hosei.media.educast.web.controller;
 
 import com.amazonaws.services.cloudfront.CloudFrontUrlSigner;
 import com.amazonaws.services.cloudfront.util.SignerUtils;
-import jp.ac.hosei.media.educast.service.AmazonS3Service;
+import jp.ac.hosei.media.educast.web.service.AmazonS3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,7 +21,6 @@ import java.util.Date;
 
 @Controller
 @RequestMapping(path = "/files")
-@ComponentScan("jp.ac.hosei.media.educast.service")
 public class FileController {
 
     private static final int EXPIRE = 60 * 60 * 1000; // 1 hour

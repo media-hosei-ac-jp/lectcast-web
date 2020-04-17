@@ -1,4 +1,4 @@
-package jp.ac.hosei.media.educast.service;
+package jp.ac.hosei.media.educast.web.service;
 
 import java.io.File;
 import java.io.FileInputStream;
