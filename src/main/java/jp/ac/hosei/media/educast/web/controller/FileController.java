@@ -14,7 +14,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -67,7 +70,6 @@ public class FileController {
             final String key = amazonS3Service.putObject(file, "files/", multipartFile.getContentType(), multipartFile.getSize(), 600);
 
             // Persist item object
-            item.setChannelId(1);
             item.setTitle(title);
             item.setS3Key(key);
             itemRepository.save(item);

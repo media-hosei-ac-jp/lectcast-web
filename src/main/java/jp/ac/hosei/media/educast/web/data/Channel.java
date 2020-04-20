@@ -1,19 +1,28 @@
 package jp.ac.hosei.media.educast.web.data;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 @Entity
+@EqualsAndHashCode
+@ToString
+@Table(name = "channel")
 public class Channel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GenericGenerator(name = "UuidGenerator", strategy = "jp.ac.hosei.media.educast.web.generator.UuidGenerator")
+    @GeneratedValue(generator = "UuidGenerator")
+    private String id;
 
-    private String contextId;
+    private String ltiContextId;
 
-    private String resourceLinkId;
+    private String ltiResourceLinkId;
 
     private String title;
 
@@ -27,37 +36,42 @@ public class Channel {
 
     private String language;
 
+    @NotNull
     private Date createdAt;
 
+    @NotNull
     private Date updatedAt;
 
-    public Integer getId() {
+    @OneToMany(mappedBy = "channel")
+    private List<Item> itemList;
+
+    @OneToMany(mappedBy = "channel")
+    private List<Feed> feedList;
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    @NotNull
-    public String getContextId() {
-        return contextId;
+    public String getLtiContextId() {
+        return ltiContextId;
     }
 
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
+    public void setLtiContextId(String contextId) {
+        this.ltiContextId = contextId;
     }
 
-    @NotNull
-    public String getResourceLinkId() {
-        return resourceLinkId;
+    public String getLtiResourceLinkId() {
+        return ltiResourceLinkId;
     }
 
-    public void setResourceLinkId(String resourceLinkId) {
-        this.resourceLinkId = resourceLinkId;
+    public void setLtiResourceLinkId(String resourceLinkId) {
+        this.ltiResourceLinkId = resourceLinkId;
     }
 
-    @NotNull
     public String getTitle() {
         return title;
     }
@@ -106,7 +120,6 @@ public class Channel {
         this.language = language;
     }
 
-    @NotNull
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -115,13 +128,20 @@ public class Channel {
         this.createdAt = createdAt;
     }
 
-    @NotNull
     public Date getUpdatedAt() {
         return updatedAt;
     }
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<Item> getItemList() {
+        return itemList;
+    }
+
+    public void setItemList(List<Item> itemList) {
+        this.itemList = itemList;
     }
 
     @PrePersist

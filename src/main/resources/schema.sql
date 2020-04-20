@@ -1,43 +1,56 @@
-CREATE TABLE IF NOT EXISTS `lti_key` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `key` VARCHAR(64) NOT NULL,
-  `secret` VARCHAR(64) NOT NULL,
+CREATE TABLE IF NOT EXISTS `lti_keypair` (
+  `lti_key` VARCHAR(64) NOT NULL,
+  `lti_secret` VARCHAR(64) NOT NULL,
   `description` VARCHAR(64) NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `key_UNIQUE` (`key` ASC) VISIBLE)
+  PRIMARY KEY (`lti_key`))
 ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `channel` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `context_id` VARCHAR(64) NOT NULL,
-  `resource_link_id` VARCHAR(64) NOT NULL,
-  `title` VARCHAR(64) NOT NULL DEFAULT "",
-  `author` VARCHAR(64) DEFAULT NULL,
-  `description` TEXT(2048) DEFAULT NULL,
+  `id` VARCHAR(36) NOT NULL,
+  `lti_context_id` VARCHAR(64) NOT NULL,
+  `lti_resource_link_id` VARCHAR(64) NOT NULL,
+  `title` VARCHAR(64) NOT NULL,
+  `author` VARCHAR(64) NULL,
+  `description` TEXT(2048) NULL,
   `explicit` TINYINT(1) NOT NULL DEFAULT 0,
-  `image` VARCHAR(64) DEFAULT NULL,
-  `language` VARCHAR(8) DEFAULT NULL,
+  `image` VARCHAR(64) NULL,
+  `language` VARCHAR(8) NULL,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `key_context_id_resource_link_id` (`context_id` ASC, `resource_link_id` ASC) VISIBLE)
+  UNIQUE INDEX `key_context_id_resource_link_id` (`lti_context_id` ASC, `lti_resource_link_id` ASC) VISIBLE)
 ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `item` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `channel_id` INT NOT NULL,
-  `guid` VARCHAR(64) DEFAULT NULL,
-  `s3_key` VARCHAR(64) NOT NULL DEFAULT "",
-  `title` VARCHAR(64) NOT NULL DEFAULT "",
-  `description` TEXT(2048) DEFAULT NULL,
-  `duration` INT UNSIGNED NOT NULL DEFAULT 0,
+  `id` VARCHAR(36) NOT NULL,
+  `channel_id` VARCHAR(36) NOT NULL,
+  `s3_key` VARCHAR(64) NOT NULL,
+  `title` VARCHAR(64) NOT NULL,
+  `description` TEXT(2048) NULL,
+  `duration` INT UNSIGNED NOT NULL,
   `explicit` TINYINT(1) NOT NULL DEFAULT 0,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX (`s3_key`),
   INDEX `fk_items_channels_idx` (`channel_id` ASC) VISIBLE,
+  UNIQUE INDEX `key_s3_key` (`s3_key` ASC) VISIBLE,
   CONSTRAINT `fk_items_channels`
+    FOREIGN KEY (`channel_id`)
+    REFERENCES `channel` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS `feed` (
+  `id` VARCHAR(36) NOT NULL,
+  `channel_id` VARCHAR(36) NOT NULL,
+  `lti_user_id` VARCHAR(64) NOT NULL,
+  `active` TINYINT(1) NOT NULL DEFAULT 1,
+  `created_at` DATETIME NOT NULL,
+  `updated_at` DATETIME NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_feed_channel_idx` (`channel_id` ASC) VISIBLE,
+  CONSTRAINT `fk_feed_channel`
     FOREIGN KEY (`channel_id`)
     REFERENCES `channel` (`id`)
     ON DELETE NO ACTION

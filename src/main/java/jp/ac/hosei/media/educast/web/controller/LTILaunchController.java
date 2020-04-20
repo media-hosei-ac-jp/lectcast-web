@@ -1,9 +1,9 @@
 package jp.ac.hosei.media.educast.web.controller;
 
 import jp.ac.hosei.media.educast.web.data.Channel;
-import jp.ac.hosei.media.educast.web.data.Item;
+import jp.ac.hosei.media.educast.web.data.Feed;
 import jp.ac.hosei.media.educast.web.repository.ChannelRepository;
-import jp.ac.hosei.media.educast.web.repository.ItemRepository;
+import jp.ac.hosei.media.educast.web.repository.FeedRepository;
 import org.imsglobal.aspect.Lti;
 import org.imsglobal.lti.launch.LtiLaunch;
 import org.imsglobal.lti.launch.LtiVerificationResult;
@@ -21,7 +21,7 @@ public class LTILaunchController {
     private ChannelRepository channelRepository;
 
     @Autowired
-    private ItemRepository itemRepository;
+    private FeedRepository feedRepository;
 
     @Lti
     @PostMapping(path = "/launch")
@@ -34,24 +34,32 @@ public class LTILaunchController {
 
         final LtiLaunch launch = result.getLtiLaunchResult();
         final boolean isInstructor = launch.getUser().getRoles().contains("Instructor");
+        model.addAttribute("isInstructor", isInstructor);
 
         // Get a channel
-        Channel channel = channelRepository.findByContextIdAndResourceLinkId(launch.getContextId(), launch.getResourceLinkId());
+        Channel channel = channelRepository.findByLtiContextIdAndLtiResourceLinkId(launch.getContextId(), launch.getResourceLinkId());
         if (null == channel) {
             if (isInstructor) {
                 channel = new Channel();
-                channel.setContextId(launch.getContextId());
-                channel.setResourceLinkId(launch.getResourceLinkId());
-                channel.setTitle("");   // Set default value
+                channel.setLtiContextId(launch.getContextId());
+                channel.setLtiResourceLinkId(launch.getResourceLinkId());
+                channel.setTitle(request.getParameter("context_title"));   // Set default value
                 channelRepository.save(channel);
             }
-        } else {
-            final Iterable<Item> items = itemRepository.findAllByChannelId(channel.getId());
-            model.addAttribute("items", items);
         }
-
-        model.addAttribute("isInstructor", isInstructor);
         model.addAttribute("channel", channel);
+
+        // Set a feed
+        final String ltiUserId = request.getParameter("user_id");
+        Feed feed = feedRepository.findByChannelAndLtiUserId(channel, ltiUserId);
+        if (null == feed) {
+            feed = new Feed();
+            feed.setChannel(channel);
+            feed.setLtiUserId(ltiUserId);
+            feed.setActive(1);
+            feedRepository.save(feed);
+        }
+        model.addAttribute("feed", feed);
 
         return "launch";
     }

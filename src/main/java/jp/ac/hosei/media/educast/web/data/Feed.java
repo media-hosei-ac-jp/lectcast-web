@@ -11,8 +11,8 @@ import java.util.Date;
 @Entity
 @EqualsAndHashCode
 @ToString
-@Table(name = "item")
-public class Item {
+@Table(name = "feed")
+public class Feed {
 
     @Id
     @GenericGenerator(name = "UuidGenerator", strategy = "jp.ac.hosei.media.educast.web.generator.UuidGenerator")
@@ -22,16 +22,9 @@ public class Item {
     @ManyToOne
     private Channel channel;
 
-    @Column(name = "s3_key")
-    private String s3Key;
+    private String ltiUserId;
 
-    private String title;
-
-    private String description;
-
-    private int duration;
-
-    private int explicit;
+    private int active;
 
     @NotNull
     private Date createdAt;
@@ -55,44 +48,20 @@ public class Item {
         this.channel = channel;
     }
 
-    public String getS3Key() {
-        return s3Key;
+    public String getLtiUserId() {
+        return ltiUserId;
     }
 
-    public void setS3Key(String s3Key) {
-        this.s3Key = s3Key;
+    public void setLtiUserId(String ltiUserId) {
+        this.ltiUserId = ltiUserId;
     }
 
-    public String getTitle() {
-        return title;
+    public int getActive() {
+        return active;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public int getExplicit() {
-        return explicit;
-    }
-
-    public void setExplicit(int explicit) {
-        this.explicit = explicit;
+    public void setActive(int active) {
+        this.active = active;
     }
 
     public Date getCreatedAt() {

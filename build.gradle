@@ -26,6 +26,7 @@ dependencies {
     }
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
+    implementation 'org.projectlombok:lombok'
     implementation 'mysql:mysql-connector-java'
     implementation group: 'org.imsglobal', name: 'basiclti-util', version: '1.2.0'
 

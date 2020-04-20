@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
+     xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:th="http://www.w3.org/1999/xhtml">
+    <channel>
+        <title th:text="${channel.title}">Channel Title</title>
+        <link>https://www.example.com/podcasts/</link>
+        <item th:each="item : ${channel.itemList}">
+            <title th:text="${item.title}">Item Title</title>
+            <description th:if="${item.description}" th:text="${item.description}">Description (option)</description>
+            <pubDate th:text="${#dates.format(item.createdAt, 'EEE, dd MMM yyyy HH:mm:ss Z')}">EEE, dd MMM yyyy HH:mm:ss Z</pubDate>
+            <enclosure th:url="${@amazonCloudFrontService.getSignedUrl(item.s3Key)}" type="audio/mpeg"
+                       th:length="${item.duration}"/>
+            <guid isPermaLink="false" th:if="${item.guid}" th:text="${item.guid}">Guid (option)</guid>
+        </item>
+    </channel>
+</rss>

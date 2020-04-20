@@ -1,7 +1,7 @@
 package jp.ac.hosei.media.educast.web.service;
 
-import jp.ac.hosei.media.educast.web.data.LtiKey;
-import jp.ac.hosei.media.educast.web.repository.LtiKeyRepository;
+import jp.ac.hosei.media.educast.web.data.LtiKeypair;
+import jp.ac.hosei.media.educast.web.repository.LtiKeypairRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 public class EduCastLtiKeySecretService implements org.imsglobal.aspect.LtiKeySecretService {
 
     @Autowired
-    private LtiKeyRepository ltiKeyRepository;
+    private LtiKeypairRepository ltiKeypairRepository;
 
     @Override
-    public String getSecretForKey(final String key) {
-        final LtiKey ltiKey = ltiKeyRepository.findByKey(key);
-        if (null != ltiKey) {
-            return ltiKey.getSecret();
+    public String getSecretForKey(final String ltiKey) {
+        final LtiKeypair ltiKeypair = ltiKeypairRepository.findByLtiKey(ltiKey);
+        if (null != ltiKeypair) {
+            return ltiKeypair.getLtiSecret();
         }
         return null;
     }

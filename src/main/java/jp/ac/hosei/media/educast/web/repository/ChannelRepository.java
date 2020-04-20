@@ -5,6 +5,8 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface ChannelRepository extends CrudRepository<Channel, Integer> {
 
-    Channel findByContextIdAndResourceLinkId(String contextId, String resourceLinkId);
+    Channel findByLtiContextId(String ltiContextId);
+
+    Channel findByLtiContextIdAndLtiResourceLinkId(String ltiContextId, String ltiResourceLinkId);
 
 }
