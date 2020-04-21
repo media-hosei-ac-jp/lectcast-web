@@ -5,6 +5,8 @@ import com.amazonaws.services.cloudfront.util.SignerUtils;
 import jp.ac.hosei.media.educast.web.data.Item;
 import jp.ac.hosei.media.educast.web.repository.ItemRepository;
 import jp.ac.hosei.media.educast.web.service.AmazonS3Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -27,6 +29,8 @@ import java.util.Date;
 @Controller
 @RequestMapping(path = "/files")
 public class FileController {
+
+    private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
     private static final int EXPIRE = 60 * 60 * 1000; // 1 hour
 

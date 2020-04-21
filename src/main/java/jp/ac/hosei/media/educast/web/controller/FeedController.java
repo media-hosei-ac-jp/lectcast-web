@@ -2,6 +2,8 @@ package jp.ac.hosei.media.educast.web.controller;
 
 import jp.ac.hosei.media.educast.web.data.Feed;
 import jp.ac.hosei.media.educast.web.repository.FeedRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -20,6 +22,8 @@ import java.io.PrintWriter;
 @Controller
 @RequestMapping(path = "/podcasts")
 public class FeedController {
+
+    private static final Logger logger = LoggerFactory.getLogger(FeedController.class);
 
     @Autowired
     private FeedRepository feedRepository;
