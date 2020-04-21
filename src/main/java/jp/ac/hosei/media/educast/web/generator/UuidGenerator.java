@@ -12,4 +12,5 @@ public class UuidGenerator extends IdentityGenerator {
     public Serializable generate(SharedSessionContractImplementor s, Object obj) {
         return UUID.randomUUID().toString();
     }
+
 }

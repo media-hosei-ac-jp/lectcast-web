@@ -2,9 +2,10 @@ package jp.ac.hosei.media.educast.web.data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 @Entity
-public class LtiKeypair {
+public class LtiKeypair implements Serializable {
 
     @Id
     private String ltiKey;

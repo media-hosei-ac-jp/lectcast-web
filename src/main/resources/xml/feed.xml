@@ -4,6 +4,7 @@
     <channel>
         <title th:text="${channel.title}">Channel Title</title>
         <link>https://www.example.com/podcasts/</link>
+
         <item th:each="item : ${channel.itemList}">
             <title th:text="${item.title}">Item Title</title>
             <description th:if="${item.description}" th:text="${item.description}">Description (option)</description>

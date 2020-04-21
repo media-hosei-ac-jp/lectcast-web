@@ -8,7 +8,6 @@ import jp.ac.hosei.media.educast.web.repository.ChannelRepository;
 import jp.ac.hosei.media.educast.web.repository.FeedRepository;
 import jp.ac.hosei.media.educast.web.repository.ItemRepository;
 import jp.ac.hosei.media.educast.web.service.AmazonS3Service;
-import org.imsglobal.lti.launch.LtiLaunch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpSession;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -53,22 +53,22 @@ public class ChannelController {
     private FeedRepository feedRepository;
 
     @GetMapping
-    public String index(final Model model) {
-        final LtiLaunch ltiLaunch = educastSession.getLtiLaunch();
-        if (null == ltiLaunch) {
+    public String index(final HttpSession httpSession, final Model model) {
+        final EducastSession educastSession = (EducastSession) httpSession.getAttribute("educast");
+        if (null == educastSession) {
             return "error";
         }
 
-        final boolean isInstructor = ltiLaunch.getUser().getRoles().contains("Instructor");
+        final boolean isInstructor = educastSession.getUserRoles().contains("Instructor");
         model.addAttribute("isInstructor", isInstructor);
 
         // Get a channel
-        Channel channel = channelRepository.findByLtiContextIdAndLtiResourceLinkId(ltiLaunch.getContextId(), ltiLaunch.getResourceLinkId());
+        Channel channel = channelRepository.findByLtiContextIdAndLtiResourceLinkId(educastSession.getContextId(), educastSession.getResourceLinkId());
         if (null == channel) {
             if (isInstructor) {
                 channel = new Channel();
-                channel.setLtiContextId(ltiLaunch.getContextId());
-                channel.setLtiResourceLinkId(ltiLaunch.getResourceLinkId());
+                channel.setLtiContextId(educastSession.getContextId());
+                channel.setLtiResourceLinkId(educastSession.getResourceLinkId());
                 channel.setTitle(educastSession.getContextTitle());   // Set default value
                 channelRepository.save(channel);
             }
@@ -88,16 +88,14 @@ public class ChannelController {
         }
         model.addAttribute("feed", feed);
 
+        httpSession.setAttribute("educast", educastSession);
         return "channel/index";
     }
 
-    @GetMapping(path = "new")
-    public String uploadForm() {
-        return "channel/uploadFile";
-    }
-
     @PostMapping
-    public String handleFileUpload(@RequestParam final MultipartFile multipartFile, @RequestParam final String title, final UriComponentsBuilder builder) {
+    public String handleFileUpload(@RequestParam final MultipartFile multipartFile, @RequestParam final String title,
+                                   final HttpSession httpSession, final UriComponentsBuilder builder) {
+        final EducastSession educastSession = (EducastSession) httpSession.getAttribute("educast");
         final Item item = new Item();
 
         File file = null;

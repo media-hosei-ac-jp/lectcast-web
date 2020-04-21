@@ -1,12 +1,12 @@
 package jp.ac.hosei.media.educast.web.component;
 
 import jp.ac.hosei.media.educast.web.data.Channel;
-import org.imsglobal.lti.launch.LtiLaunch;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -16,11 +16,15 @@ public class EducastSession implements Serializable  {
 
     private Channel channel;
 
-    private LtiLaunch ltiLaunch;
+    private String resourceLinkId;
+
+    private String contextId;
+
+    private String contextTitle;
 
     private String userId;
 
-    private String contextTitle;
+    private List<String> userRoles;
 
     public Channel getChannel() {
         return channel;
@@ -30,12 +34,28 @@ public class EducastSession implements Serializable  {
         this.channel = channel;
     }
 
-    public LtiLaunch getLtiLaunch() {
-        return ltiLaunch;
+    public String getResourceLinkId() {
+        return resourceLinkId;
     }
 
-    public void setLtiLaunch(LtiLaunch ltiLaunch) {
-        this.ltiLaunch = ltiLaunch;
+    public void setResourceLinkId(String resourceLinkId) {
+        this.resourceLinkId = resourceLinkId;
+    }
+
+    public String getContextId() {
+        return contextId;
+    }
+
+    public void setContextId(String contextId) {
+        this.contextId = contextId;
+    }
+
+    public String getContextTitle() {
+        return contextTitle;
+    }
+
+    public void setContextTitle(String contextTitle) {
+        this.contextTitle = contextTitle;
     }
 
     public String getUserId() {
@@ -46,12 +66,12 @@ public class EducastSession implements Serializable  {
         this.userId = userId;
     }
 
-    public String getContextTitle() {
-        return contextTitle;
+    public List<String> getUserRoles() {
+        return userRoles;
     }
 
-    public void setContextTitle(String contextTitle) {
-        this.contextTitle = contextTitle;
+    public void setUserRoles(List<String> userRoles) {
+        this.userRoles = userRoles;
     }
 
 }

@@ -6,13 +6,14 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @EqualsAndHashCode
 @ToString
 @Table(name = "feed")
-public class Feed {
+public class Feed implements Serializable {
 
     @Id
     @GenericGenerator(name = "UuidGenerator", strategy = "jp.ac.hosei.media.educast.web.generator.UuidGenerator")

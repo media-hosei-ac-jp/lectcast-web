@@ -10,41 +10,51 @@
 </head>
 <body class="bg-light">
 <div th:if="${isInstructor}">Instructor</div>
-<div class="container">
-    <div class="py-3 text-center">
-        <h1 th:text="${channel.title}">Channel Title</h1>
-    </div>
 
-    <div class="row">
-        <span th:text="${feed.id}"></span>
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading" th:text="${channel.title}">Channel Title</h1>
+        <p class="lead text-muted" th:if="${channel.description}" th:text="${channel.description}">Something short and
+            leading about the channel.</p>
+        <p>
+            <a href="#" th:href="@{/podcasts(feed=${feed.id})}" class="btn btn-primary my-2">RSS Feed</a>
+            <a href="#" class="btn btn-secondary my-2">Secondary action</a>
+        </p>
     </div>
-    <div class="row" th:if="${! #lists.isEmpty(channel.itemList)}">
-        <div class="col-12" th:each="item : ${channel.itemList}">
-            <a href="#" th:href="${@amazonCloudFrontService.getSignedUrl(item.s3Key)}" th:text="${item.title}">Item Title</a>
+</section>
+
+<main class="py-5 bg-light">
+    <div class="container">
+        <div class="row" th:if="${! #lists.isEmpty(channel.itemList)}">
+            <div class="col-12" th:each="item : ${channel.itemList}">
+                <a href="#" th:href="${@amazonCloudFrontService.getSignedUrl(item.s3Key)}" th:text="${item.title}">Item
+                    Title</a>
+            </div>
         </div>
-    </div>
 
-    <div class="row" th:if="${isInstructor}">
-        <div class="col-12">
-            <h4 class="mb-3">Upload an audio file</h4>
-            <form method="post" enctype="multipart/form-data" action="#" th:action="@{'/channels'}">
-                <div class="mb-3">
-                    <label for="uploadFormTitle">Title</label>
-                    <input type="text" name="title" id="uploadFormTitle" class="form-control"
-                           placeholder="Episode title" required>
-                </div>
-                <div class="mb-3">
-                    <div class="form-group">
-                        <label for="uploadFormMultipartFile">MP3 File</label>
-                        <input type="file" name="multipartFile" id="uploadFormMultipartFile" class="form-control-file">
+        <div class="row" th:if="${isInstructor}">
+            <div class="col-12">
+                <h4 class="mb-3">Upload an audio file</h4>
+                <form method="post" enctype="multipart/form-data" action="#" th:action="@{/channels}">
+                    <div class="mb-3">
+                        <label for="uploadFormTitle">Title</label>
+                        <input type="text" name="title" id="uploadFormTitle" class="form-control"
+                               placeholder="Episode title" required>
                     </div>
-                </div>
-                <hr/>
-                <button class="btn btn-primary btn-block" type="submit">Upload</button>
-            </form>
+                    <div class="mb-3">
+                        <div class="form-group">
+                            <label for="uploadFormMultipartFile">MP3 File</label>
+                            <input type="file" name="multipartFile" id="uploadFormMultipartFile"
+                                   class="form-control-file">
+                        </div>
+                    </div>
+                    <hr/>
+                    <button class="btn btn-primary btn-block" type="submit">Upload</button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+</main>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

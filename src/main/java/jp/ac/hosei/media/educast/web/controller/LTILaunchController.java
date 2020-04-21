@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.net.URI;
 
 @Controller
@@ -25,7 +26,8 @@ public class LTILaunchController {
 
     @Lti
     @PostMapping(path = "/launch")
-    public String launch(final HttpServletRequest request, final LtiVerificationResult result, final Model model, final UriComponentsBuilder builder) {
+    public String launch(final HttpServletRequest request, final LtiVerificationResult result, final Model model,
+                         final HttpSession httpSession, final UriComponentsBuilder builder) {
         if (!result.getSuccess()) {
             // LTI error
             model.addAttribute("message", result.getMessage());
@@ -33,13 +35,15 @@ public class LTILaunchController {
         }
 
         final LtiLaunch ltiLaunch = result.getLtiLaunchResult();
-        educastSession.setLtiLaunch(ltiLaunch);
+        educastSession.setUserId(ltiLaunch.getUser().getId());
+        educastSession.setUserRoles(ltiLaunch.getUser().getRoles());
+        educastSession.setContextId(ltiLaunch.getContextId());
+        educastSession.setResourceLinkId(ltiLaunch.getResourceLinkId());
 
         final String contextTitle = request.getParameter("context_title");
         educastSession.setContextTitle(contextTitle);
 
-        final String userId = request.getParameter("user_id");
-        educastSession.setUserId(userId);
+        httpSession.setAttribute("educast", educastSession);
 
         final URI location = builder.path("/channels").build().toUri();
         return "redirect:" + location.toString();
