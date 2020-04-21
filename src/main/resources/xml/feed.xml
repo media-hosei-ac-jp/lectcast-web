@@ -10,7 +10,7 @@
             <pubDate th:text="${#dates.format(item.createdAt, 'EEE, dd MMM yyyy HH:mm:ss Z')}">EEE, dd MMM yyyy HH:mm:ss Z</pubDate>
             <enclosure th:url="${@amazonCloudFrontService.getSignedUrl(item.s3Key)}" type="audio/mpeg"
                        th:length="${item.duration}"/>
-            <guid isPermaLink="false" th:if="${item.guid}" th:text="${item.guid}">Guid (option)</guid>
+            <guid isPermaLink="false" th:text="${item.id}">Guid</guid>
         </item>
     </channel>
 </rss>
