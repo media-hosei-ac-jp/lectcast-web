@@ -27,7 +27,7 @@
     <div class="row" th:if="${isInstructor}">
         <div class="col-12">
             <h4 class="mb-3">Upload an audio file</h4>
-            <form method="post" enctype="multipart/form-data" action="#" th:action="@{/files}">
+            <form method="post" enctype="multipart/form-data" action="#" th:action="@{'/channels'}">
                 <div class="mb-3">
                     <label for="uploadFormTitle">Title</label>
                     <input type="text" name="title" id="uploadFormTitle" class="form-control"

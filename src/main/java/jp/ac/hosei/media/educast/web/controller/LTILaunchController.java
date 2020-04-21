@@ -1,9 +1,6 @@
 package jp.ac.hosei.media.educast.web.controller;
 
-import jp.ac.hosei.media.educast.web.data.Channel;
-import jp.ac.hosei.media.educast.web.data.Feed;
-import jp.ac.hosei.media.educast.web.repository.ChannelRepository;
-import jp.ac.hosei.media.educast.web.repository.FeedRepository;
+import jp.ac.hosei.media.educast.web.component.EducastSession;
 import org.imsglobal.aspect.Lti;
 import org.imsglobal.lti.launch.LtiLaunch;
 import org.imsglobal.lti.launch.LtiVerificationResult;
@@ -13,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 
 @Controller
 public class LTILaunchController {
@@ -22,50 +21,28 @@ public class LTILaunchController {
     private static final Logger logger = LoggerFactory.getLogger(LTILaunchController.class);
 
     @Autowired
-    private ChannelRepository channelRepository;
-
-    @Autowired
-    private FeedRepository feedRepository;
+    protected EducastSession educastSession;
 
     @Lti
     @PostMapping(path = "/launch")
-    public String launch(final HttpServletRequest request, final LtiVerificationResult result, final Model model) {
+    public String launch(final HttpServletRequest request, final LtiVerificationResult result, final Model model, final UriComponentsBuilder builder) {
         if (!result.getSuccess()) {
             // LTI error
             model.addAttribute("message", result.getMessage());
             return "error";
         }
 
-        final LtiLaunch launch = result.getLtiLaunchResult();
-        final boolean isInstructor = launch.getUser().getRoles().contains("Instructor");
-        model.addAttribute("isInstructor", isInstructor);
+        final LtiLaunch ltiLaunch = result.getLtiLaunchResult();
+        educastSession.setLtiLaunch(ltiLaunch);
 
-        // Get a channel
-        Channel channel = channelRepository.findByLtiContextIdAndLtiResourceLinkId(launch.getContextId(), launch.getResourceLinkId());
-        if (null == channel) {
-            if (isInstructor) {
-                channel = new Channel();
-                channel.setLtiContextId(launch.getContextId());
-                channel.setLtiResourceLinkId(launch.getResourceLinkId());
-                channel.setTitle(request.getParameter("context_title"));   // Set default value
-                channelRepository.save(channel);
-            }
-        }
-        model.addAttribute("channel", channel);
+        final String contextTitle = request.getParameter("context_title");
+        educastSession.setContextTitle(contextTitle);
 
-        // Set a feed
-        final String ltiUserId = request.getParameter("user_id");
-        Feed feed = feedRepository.findByChannelAndLtiUserId(channel, ltiUserId);
-        if (null == feed) {
-            feed = new Feed();
-            feed.setChannel(channel);
-            feed.setLtiUserId(ltiUserId);
-            feed.setActive(1);
-            feedRepository.save(feed);
-        }
-        model.addAttribute("feed", feed);
+        final String userId = request.getParameter("user_id");
+        educastSession.setUserId(userId);
 
-        return "launch";
+        final URI location = builder.path("/channels").build().toUri();
+        return "redirect:" + location.toString();
     }
 
 }
