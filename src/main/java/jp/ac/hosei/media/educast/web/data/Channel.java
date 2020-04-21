@@ -44,6 +44,7 @@ public class Channel implements Serializable {
     private Date updatedAt;
 
     @OneToMany(mappedBy = "channel")
+    @OrderBy("createdAt DESC")
     private List<Item> itemList;
 
     @OneToMany(mappedBy = "channel")

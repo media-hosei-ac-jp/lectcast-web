@@ -94,6 +94,7 @@ public class ChannelController {
 
     @PostMapping
     public String handleFileUpload(@RequestParam final MultipartFile multipartFile, @RequestParam final String title,
+                                   @RequestParam final String description,
                                    final HttpSession httpSession, final UriComponentsBuilder builder) {
         final EducastSession educastSession = (EducastSession) httpSession.getAttribute("educast");
         final Item item = new Item();
@@ -116,6 +117,7 @@ public class ChannelController {
             item.setChannel(educastSession.getChannel());
             item.setS3Key(String.join("/", new String[] {KEY_PREFIX, key}));
             item.setTitle(title);
+            item.setDescription(description);
             itemRepository.save(item);
         } catch (IOException e) {
             e.printStackTrace();

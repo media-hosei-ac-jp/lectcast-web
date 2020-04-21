@@ -9,8 +9,6 @@
     <title>EduCast</title>
 </head>
 <body class="bg-light">
-<div th:if="${isInstructor}">Instructor</div>
-
 <section class="jumbotron text-center">
     <div class="container">
         <h1 class="jumbotron-heading" th:text="${channel.title}">Channel Title</h1>
@@ -18,23 +16,29 @@
             leading about the channel.</p>
         <p>
             <a href="#" th:href="@{/podcasts(feed=${feed.id})}" class="btn btn-primary my-2">RSS Feed</a>
-            <a href="#" class="btn btn-secondary my-2">Secondary action</a>
         </p>
     </div>
 </section>
 
-<main class="py-5 bg-light">
-    <div class="container">
-        <div class="row" th:if="${! #lists.isEmpty(channel.itemList)}">
-            <div class="col-12" th:each="item : ${channel.itemList}">
-                <a href="#" th:href="${@amazonCloudFrontService.getSignedUrl(item.s3Key)}" th:text="${item.title}">Item
-                    Title</a>
+<main class="py-3 bg-light">
+    <div class="container" th:if="${! #lists.isEmpty(channel.itemList)}">
+        <article class="row" th:each="item : ${channel.itemList}">
+            <div class="col-6 col-sm-4 col-lg-3 px-3">
+                <time th:datetime="${item.createdAt}" th:text="${item.createdAt}">Item CreatedAt</time>
             </div>
-        </div>
+            <div class="col-12 col-sm-10 px-3">
+                <p th:text="${item.title}">Item Title</p>
+                <p class="my-1" th:text="${item.description}">Item Description</p>
+            </div>
+        </article>
+    </div>
+</main>
 
+<footer class="pt-4 my-md-5 pt-md-5 border-top">
+    <div class="container">
         <div class="row" th:if="${isInstructor}">
             <div class="col-12">
-                <h4 class="mb-3">Upload an audio file</h4>
+                <h4 class="mb-3">Upload an episode file</h4>
                 <form method="post" enctype="multipart/form-data" action="#" th:action="@{/channels}">
                     <div class="mb-3">
                         <label for="uploadFormTitle">Title</label>
@@ -42,10 +46,15 @@
                                placeholder="Episode title" required>
                     </div>
                     <div class="mb-3">
+                        <label for="uploadFormDescription">Description</label>
+                        <textarea name="description" id="uploadFormDescription" class="form-control"
+                                  placeholder="Episode description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
                         <div class="form-group">
                             <label for="uploadFormMultipartFile">MP3 File</label>
                             <input type="file" name="multipartFile" id="uploadFormMultipartFile"
-                                   class="form-control-file">
+                                   class="form-control-file" required>
                         </div>
                     </div>
                     <hr/>
@@ -54,7 +63,7 @@
             </div>
         </div>
     </div>
-</main>
+</footer>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
