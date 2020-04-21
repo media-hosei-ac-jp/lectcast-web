@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class AmazonS3Service {
 
+    private static final String COMMON_PREFIX = "files";
+
     @Value("${aws.accessKeyId}")
     private String accessKeyId;
 
@@ -43,15 +45,15 @@ public class AmazonS3Service {
             objectMetadata.setContentType(contentType);
             objectMetadata.setContentLength(contentLength);
             objectMetadata.setCacheControl("public, max-age=" + maxAge);
-            getAmazonS3().putObject(bucketName, prefix + key, inputStream, objectMetadata);
+            getAmazonS3().putObject(bucketName, String.join("/", new String[]{COMMON_PREFIX, prefix, key}), inputStream, objectMetadata);
             return key;
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public ResponseEntity<InputStreamResource> getObject(final String key) {
-        final S3Object s3Object = getAmazonS3().getObject(bucketName, key);
+    public ResponseEntity<InputStreamResource> getObject(final String key, final String prefix) {
+        final S3Object s3Object = getAmazonS3().getObject(bucketName, String.join("/", new String[]{COMMON_PREFIX, prefix, key}));
         return ResponseEntity.ok()
                 .contentLength(s3Object.getObjectMetadata().getContentLength())
                 .contentType(MediaType.parseMediaType(s3Object.getObjectMetadata().getContentType()))

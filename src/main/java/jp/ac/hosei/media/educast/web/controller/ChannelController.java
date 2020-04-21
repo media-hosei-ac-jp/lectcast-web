@@ -35,6 +35,8 @@ public class ChannelController {
 
     private static final Logger logger = LoggerFactory.getLogger(ChannelController.class);
 
+    private static final String KEY_PREFIX = "audio";
+
     @Autowired
     protected EducastSession educastSession;
 
@@ -110,11 +112,11 @@ public class ChannelController {
             uploadFileStream.close();
 
             // Put an audio object
-            final String key = amazonS3Service.putObject(file, "files/", multipartFile.getContentType(), multipartFile.getSize(), 600);
+            final String key = amazonS3Service.putObject(file, KEY_PREFIX, multipartFile.getContentType(), multipartFile.getSize(), 600);
 
             // Persist item object
             item.setChannel(educastSession.getChannel());
-            item.setS3Key(key);
+            item.setS3Key(String.join("/", new String[] {KEY_PREFIX, key}));
             item.setTitle(title);
             itemRepository.save(item);
         } catch (IOException e) {
@@ -132,7 +134,7 @@ public class ChannelController {
     @GetMapping("item/download")
     @ResponseBody
     public ResponseEntity<InputStreamResource> serveFile(@RequestParam("key") final String key) {
-        return amazonS3Service.getObject("files/" + key);
+        return amazonS3Service.getObject(key, KEY_PREFIX);
     }
 
 }
