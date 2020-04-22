@@ -1,10 +1,10 @@
-package jp.ac.hosei.media.educast.web;
+package jp.ac.hosei.media.lectcast.web;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EducastWebApplicationTests {
+class LectcastWebApplicationTests {
 
 	@Test
 	void contextLoads() {

@@ -1,4 +1,4 @@
-package jp.ac.hosei.media.educast.web.data;
+package jp.ac.hosei.media.lectcast.web.data;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -17,7 +17,7 @@ import java.util.List;
 public class Channel implements Serializable {
 
     @Id
-    @GenericGenerator(name = "UuidGenerator", strategy = "jp.ac.hosei.media.educast.web.generator.UuidGenerator")
+    @GenericGenerator(name = "UuidGenerator", strategy = "jp.ac.hosei.media.lectcast.web.generator.UuidGenerator")
     @GeneratedValue(generator = "UuidGenerator")
     private String id;
 

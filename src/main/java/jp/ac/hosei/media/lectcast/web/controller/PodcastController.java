@@ -1,7 +1,7 @@
-package jp.ac.hosei.media.educast.web.controller;
+package jp.ac.hosei.media.lectcast.web.controller;
 
-import jp.ac.hosei.media.educast.web.data.Feed;
-import jp.ac.hosei.media.educast.web.repository.FeedRepository;
+import jp.ac.hosei.media.lectcast.web.data.Feed;
+import jp.ac.hosei.media.lectcast.web.repository.FeedRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

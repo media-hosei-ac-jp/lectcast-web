@@ -1,4 +1,4 @@
-package jp.ac.hosei.media.educast.web.generator;
+package jp.ac.hosei.media.lectcast.web.generator;
 
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentityGenerator;

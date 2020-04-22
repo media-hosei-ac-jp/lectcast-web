@@ -1,12 +1,12 @@
-package jp.ac.hosei.media.educast.web.service;
+package jp.ac.hosei.media.lectcast.web.service;
 
-import jp.ac.hosei.media.educast.web.data.LtiKeypair;
-import jp.ac.hosei.media.educast.web.repository.LtiKeypairRepository;
+import jp.ac.hosei.media.lectcast.web.data.LtiKeypair;
+import jp.ac.hosei.media.lectcast.web.repository.LtiKeypairRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EduCastLtiKeySecretService implements org.imsglobal.aspect.LtiKeySecretService {
+public class LectcastLtiKeySecretService implements org.imsglobal.aspect.LtiKeySecretService {
 
     @Autowired
     private LtiKeypairRepository ltiKeypairRepository;

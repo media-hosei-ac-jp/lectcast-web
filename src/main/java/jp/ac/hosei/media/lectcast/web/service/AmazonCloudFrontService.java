@@ -1,4 +1,4 @@
-package jp.ac.hosei.media.educast.web.service;
+package jp.ac.hosei.media.lectcast.web.service;
 
 import com.amazonaws.services.cloudfront.CloudFrontUrlSigner;
 import com.amazonaws.services.cloudfront.util.SignerUtils;

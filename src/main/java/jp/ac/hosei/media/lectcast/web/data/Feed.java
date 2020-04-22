@@ -1,4 +1,4 @@
-package jp.ac.hosei.media.educast.web.data;
+package jp.ac.hosei.media.lectcast.web.data;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -12,27 +12,20 @@ import java.util.Date;
 @Entity
 @EqualsAndHashCode
 @ToString
-@Table(name = "item")
-public class Item implements Serializable {
+@Table(name = "feed")
+public class Feed implements Serializable {
 
     @Id
-    @GenericGenerator(name = "UuidGenerator", strategy = "jp.ac.hosei.media.educast.web.generator.UuidGenerator")
+    @GenericGenerator(name = "UuidGenerator", strategy = "jp.ac.hosei.media.lectcast.web.generator.UuidGenerator")
     @GeneratedValue(generator = "UuidGenerator")
     private String id;
 
     @ManyToOne
     private Channel channel;
 
-    @Column(name = "s3_key")
-    private String s3Key;
+    private String ltiUserId;
 
-    private String title;
-
-    private String description;
-
-    private int duration;
-
-    private int explicit;
+    private int active;
 
     @NotNull
     private Date createdAt;
@@ -56,44 +49,20 @@ public class Item implements Serializable {
         this.channel = channel;
     }
 
-    public String getS3Key() {
-        return s3Key;
+    public String getLtiUserId() {
+        return ltiUserId;
     }
 
-    public void setS3Key(String s3Key) {
-        this.s3Key = s3Key;
+    public void setLtiUserId(String ltiUserId) {
+        this.ltiUserId = ltiUserId;
     }
 
-    public String getTitle() {
-        return title;
+    public int getActive() {
+        return active;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public int getExplicit() {
-        return explicit;
-    }
-
-    public void setExplicit(int explicit) {
-        this.explicit = explicit;
+    public void setActive(int active) {
+        this.active = active;
     }
 
     public Date getCreatedAt() {

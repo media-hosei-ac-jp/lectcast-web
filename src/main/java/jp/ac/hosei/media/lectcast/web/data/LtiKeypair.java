@@ -1,4 +1,4 @@
-package jp.ac.hosei.media.educast.web.data;
+package jp.ac.hosei.media.lectcast.web.data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

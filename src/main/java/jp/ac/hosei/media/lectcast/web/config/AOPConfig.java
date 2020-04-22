@@ -1,4 +1,4 @@
-package jp.ac.hosei.media.educast.web.config;
+package jp.ac.hosei.media.lectcast.web.config;
 
 import org.imsglobal.aspect.LtiKeySecretService;
 import org.imsglobal.aspect.LtiLaunchVerifier;
@@ -13,11 +13,11 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 public class AOPConfig {
 
     @Autowired
-    private LtiKeySecretService eduCastLtiKeySecretService;
+    private LtiKeySecretService lectcastLtiKeySecretService;
 
     @Bean
     public LtiLaunchVerifier ltiLaunchVerifier() {
-        return new LtiLaunchVerifier(eduCastLtiKeySecretService, new LtiOauthVerifier());
+        return new LtiLaunchVerifier(lectcastLtiKeySecretService, new LtiOauthVerifier());
     }
 
 }

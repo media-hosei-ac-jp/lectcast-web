@@ -1,6 +1,6 @@
-package jp.ac.hosei.media.educast.web.controller;
+package jp.ac.hosei.media.lectcast.web.controller;
 
-import jp.ac.hosei.media.educast.web.component.EducastSession;
+import jp.ac.hosei.media.lectcast.web.component.LectcastSession;
 import org.imsglobal.aspect.Lti;
 import org.imsglobal.lti.launch.LtiLaunch;
 import org.imsglobal.lti.launch.LtiVerificationResult;
@@ -22,7 +22,7 @@ public class LTILaunchController {
     private static final Logger logger = LoggerFactory.getLogger(LTILaunchController.class);
 
     @Autowired
-    protected EducastSession educastSession;
+    protected LectcastSession lectcastSession;
 
     @Lti
     @PostMapping(path = "/launch")
@@ -35,15 +35,15 @@ public class LTILaunchController {
         }
 
         final LtiLaunch ltiLaunch = result.getLtiLaunchResult();
-        educastSession.setUserId(ltiLaunch.getUser().getId());
-        educastSession.setUserRoles(ltiLaunch.getUser().getRoles());
-        educastSession.setContextId(ltiLaunch.getContextId());
-        educastSession.setResourceLinkId(ltiLaunch.getResourceLinkId());
+        lectcastSession.setUserId(ltiLaunch.getUser().getId());
+        lectcastSession.setUserRoles(ltiLaunch.getUser().getRoles());
+        lectcastSession.setContextId(ltiLaunch.getContextId());
+        lectcastSession.setResourceLinkId(ltiLaunch.getResourceLinkId());
 
         final String contextTitle = request.getParameter("context_title");
-        educastSession.setContextTitle(contextTitle);
+        lectcastSession.setContextTitle(contextTitle);
 
-        httpSession.setAttribute("educast", educastSession);
+        httpSession.setAttribute("lectcast", lectcastSession);
 
         final URI location = builder.path("/channels").build().toUri();
         return "redirect:" + location.toString();

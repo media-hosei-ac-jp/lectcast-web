@@ -1,6 +1,6 @@
-package jp.ac.hosei.media.educast.web.component;
+package jp.ac.hosei.media.lectcast.web.component;
 
-import jp.ac.hosei.media.educast.web.data.Channel;
+import jp.ac.hosei.media.lectcast.web.data.Channel;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class EducastSession implements Serializable  {
+public class LectcastSession implements Serializable  {
 
     private static final long serialVersionUID = 1L;
 

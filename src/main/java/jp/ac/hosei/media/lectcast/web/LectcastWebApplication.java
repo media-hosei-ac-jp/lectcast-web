@@ -1,4 +1,4 @@
-package jp.ac.hosei.media.educast.web;
+package jp.ac.hosei.media.lectcast.web;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -19,11 +19,11 @@ import java.util.Map;
 
 @SpringBootApplication
 @RestController
-public class EducastWebApplication {
+public class LectcastWebApplication {
 
     private final RequestMappingHandlerMapping handlerMapping;
 
-    public EducastWebApplication(RequestMappingHandlerMapping handlerMapping) {
+    public LectcastWebApplication(RequestMappingHandlerMapping handlerMapping) {
         // refs. https://qiita.com/otsu-Miya/items/eac37b2720b67a58690b
         this.handlerMapping = handlerMapping;
         System.out.println("======= url mapping");
@@ -53,7 +53,7 @@ public class EducastWebApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(EducastWebApplication.class, args);
+        SpringApplication.run(LectcastWebApplication.class, args);
     }
 
     @RequestMapping("/")

@@ -1,4 +1,4 @@
-package jp.ac.hosei.media.educast.web.config;
+package jp.ac.hosei.media.lectcast.web.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
