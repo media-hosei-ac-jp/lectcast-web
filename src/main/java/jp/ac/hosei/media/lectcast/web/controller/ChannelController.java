@@ -4,6 +4,7 @@ import jp.ac.hosei.media.lectcast.web.component.LectcastSession;
 import jp.ac.hosei.media.lectcast.web.data.Channel;
 import jp.ac.hosei.media.lectcast.web.data.Feed;
 import jp.ac.hosei.media.lectcast.web.data.Item;
+import jp.ac.hosei.media.lectcast.web.form.ItemForm;
 import jp.ac.hosei.media.lectcast.web.repository.ChannelRepository;
 import jp.ac.hosei.media.lectcast.web.repository.FeedRepository;
 import jp.ac.hosei.media.lectcast.web.repository.ItemRepository;
@@ -93,8 +94,7 @@ public class ChannelController {
     }
 
     @PostMapping
-    public String handleFileUpload(@RequestParam final MultipartFile multipartFile, @RequestParam final String title,
-                                   @RequestParam final String description,
+    public String handleFileUpload(final ItemForm itemForm,
                                    final HttpSession httpSession, final UriComponentsBuilder builder) {
         final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
         final Item item = new Item();
@@ -105,19 +105,20 @@ public class ChannelController {
             final Path tmpPath = Files.createTempFile(Paths.get("/tmp"), "lectcast_", ".tmp");
             file = tmpPath.toFile();
 
-            final byte[] bytes = multipartFile.getBytes();
+            final byte[] bytes = itemForm.getAudioFile().getBytes();
             final BufferedOutputStream uploadFileStream = new BufferedOutputStream(new FileOutputStream(file));
             uploadFileStream.write(bytes);
             uploadFileStream.close();
 
             // Put an audio object
-            final String key = amazonS3Service.putObject(file, KEY_PREFIX, multipartFile.getContentType(), multipartFile.getSize(), 600);
+            final String key = amazonS3Service.putObject(file, KEY_PREFIX, itemForm.getAudioFile().getContentType(),
+                    itemForm.getAudioFile().getSize(), 600);
 
             // Persist item object
             item.setChannel(lectcastSession.getChannel());
             item.setS3Key(String.join("/", new String[] {KEY_PREFIX, key}));
-            item.setTitle(title);
-            item.setDescription(description);
+            item.setTitle(itemForm.getTitle());
+            item.setDescription(itemForm.getDescription());
             itemRepository.save(item);
         } catch (IOException e) {
             e.printStackTrace();
@@ -135,6 +136,11 @@ public class ChannelController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> serveFile(@RequestParam("key") final String key) {
         return amazonS3Service.getObject(key, KEY_PREFIX);
+    }
+
+    @ModelAttribute(name = "itemForm")
+    public ItemForm initItemForm(){
+        return new ItemForm();
     }
 
 }
