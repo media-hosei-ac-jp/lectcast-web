@@ -22,13 +22,18 @@
 
 <main class="py-3 bg-light">
     <div class="container" th:if="${! #lists.isEmpty(channel.itemList)}">
-        <article class="row" th:each="item : ${channel.itemList}">
-            <div class="col-6 col-sm-4 col-lg-3 px-3">
-                <time th:datetime="${item.createdAt}" th:text="${item.createdAt}">Item CreatedAt</time>
+        <article class="row justify-content-end" th:each="item : ${channel.itemList}">
+            <div class="col-12 col-sm-4 col-lg-3">
+                <time th:datetime="${item.createdAt}" th:text="${#dates.format(item.createdAt, 'yyyy/MM/dd HH:mm')}">yyyy/MM/dd HH:mm</time>
             </div>
-            <div class="col-12 col-sm-10 px-3">
-                <p th:text="${item.title}">Item Title</p>
+            <div class="col-12 col-sm-8 col-lg-9">
+                <p class="mb-0" th:text="${item.title}">Item Title</p>
+            </div>
+            <div class="col-12 col-sm-8 col-lg-9" th:if="${item.description}">
                 <p class="my-1" hosei:brtext="${item.description}">Item Description</p>
+            </div>
+            <div class="col-12 col-sm-8 col-lg-9" th:if="${isInstructor}">
+                <a href="#" th:href="@{/channels/item/download(key=${item.s3Key})}">Download a File</a>
             </div>
         </article>
     </div>
@@ -39,7 +44,7 @@
         <div class="row" th:if="${isInstructor}">
             <div class="col-12">
                 <h4 class="mb-3">Upload an episode file</h4>
-                <form method="post" modelAttribute="itemForm" enctype="multipart/form-data" action="#" th:action="@{/channels}">
+                <form method="post" enctype="multipart/form-data" action="#" th:action="@{/channels}">
                     <div class="mb-3">
                         <label for="itemFormTitle">Title</label>
                         <input type="text" name="title" id="itemFormTitle" class="form-control"

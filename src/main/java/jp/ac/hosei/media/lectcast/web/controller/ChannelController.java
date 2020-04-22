@@ -116,7 +116,7 @@ public class ChannelController {
 
             // Persist item object
             item.setChannel(lectcastSession.getChannel());
-            item.setS3Key(String.join("/", new String[] {KEY_PREFIX, key}));
+            item.setS3Key(key);
             item.setTitle(itemForm.getTitle());
             item.setDescription(itemForm.getDescription());
             itemRepository.save(item);

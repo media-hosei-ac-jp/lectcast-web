@@ -21,7 +21,7 @@ public class AmazonCloudFrontService {
     @Value("${aws.cloudFront.keyPairId}")
     private String keyPairId;
 
-    public String getSignedUrl(final String key) throws InvalidKeySpecException, IOException {
+    public String getSignedUrl(final String key, final String prefix) throws InvalidKeySpecException, IOException {
         final File privateKeyFile = new File(System.getProperty("user.home") + "/certs/pk-" + keyPairId + ".pem");
 
         // Generate a signed URL
@@ -29,7 +29,7 @@ public class AmazonCloudFrontService {
                 SignerUtils.Protocol.https,
                 distributionDomain,
                 privateKeyFile,
-                key,
+                String.join("/", new String[]{prefix, key}),
                 keyPairId,
                 getExpireTime());
     }
