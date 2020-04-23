@@ -9,7 +9,7 @@
     <title>Lectcast</title>
 </head>
 <body class="bg-light">
-<section class="jumbotron text-center">
+<section class="jumbotron text-center my-0 mb-md-3">
     <div class="container">
         <h1 class="jumbotron-heading" th:text="${channel.title}">Channel Title</h1>
         <p class="lead text-muted" th:if="${channel.description}" th:text="${channel.description}">Something short and
@@ -20,11 +20,14 @@
     </div>
 </section>
 
-<main class="py-3 bg-light">
+<main class="pb-3 bg-light">
     <div class="container" th:if="${! #lists.isEmpty(channel.itemList)}">
-        <article class="row justify-content-end" th:each="item : ${channel.itemList}">
+        <h2>Episodes</h2>
+        <article class="row justify-content-end mt-2" th:each="item : ${channel.itemList}">
             <div class="col-12 col-sm-4 col-lg-3">
-                <time th:datetime="${item.createdAt}" th:text="${#dates.format(item.createdAt, 'yyyy/MM/dd HH:mm')}">yyyy/MM/dd HH:mm</time>
+                <time th:datetime="${item.createdAt}" th:text="${#dates.format(item.createdAt, 'yyyy/MM/dd HH:mm')}">
+                    yyyy/MM/dd HH:mm
+                </time>
             </div>
             <div class="col-12 col-sm-8 col-lg-9">
                 <p class="mb-0" th:text="${item.title}">Item Title</p>
@@ -39,32 +42,57 @@
     </div>
 </main>
 
-<footer class="pt-4 my-md-5 pt-md-5 border-top">
+<footer class="pt-3 my-md-3 pt-md-4 border-top">
     <div class="container">
-        <div class="row" th:if="${isInstructor}">
-            <div class="col-12">
-                <h4 class="mb-3">Upload an episode file</h4>
-                <form method="post" enctype="multipart/form-data" action="#" th:action="@{/channels}">
-                    <div class="mb-3">
-                        <label for="itemFormTitle">Title</label>
-                        <input type="text" name="title" id="itemFormTitle" class="form-control"
-                               placeholder="Episode title" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemFormDescription">Description</label>
-                        <textarea name="description" id="itemFormDescription" class="form-control"
-                                  placeholder="Episode description" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-group">
-                            <label for="itemFormAudioFile">MP3 File</label>
-                            <input type="file" name="audioFile" id="itemFormAudioFile"
-                                   class="form-control-file" required>
+        <div th:if="${isInstructor}">
+            <h2>Management Tools</h2>
+            <div class="row">
+                <div class="col-12 col-sm-4 col-lg-3">
+                    <h4 class="mb-0">Upload an Episode</h4>
+                </div>
+                <div class="col-12 col-sm-8 col-lg-9">
+                    <form method="post" enctype="multipart/form-data" action="#" th:action="@{/channels/item}">
+                        <div class="mb-3">
+                            <label for="itemFormTitle">Title</label>
+                            <input type="text" name="title" id="itemFormTitle" class="form-control"
+                                   placeholder="Episode title" required>
                         </div>
-                    </div>
-                    <hr/>
-                    <button class="btn btn-primary btn-block" type="submit">Upload</button>
-                </form>
+                        <div class="mb-3">
+                            <label for="itemFormDescription">Description</label>
+                            <textarea name="description" id="itemFormDescription" class="form-control"
+                                      placeholder="Episode description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-group">
+                                <label for="itemFormAudioFile">MP3 File</label>
+                                <input type="file" name="audioFile" id="itemFormAudioFile"
+                                       class="form-control-file" required>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-block" type="submit">Upload</button>
+                    </form>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-12 col-sm-4 col-lg-3">
+                    <h4 class="mb-0">Channel Settings</h4>
+                </div>
+                <div class="col-12 col-sm-8 col-lg-9">
+                    <form method="post" enctype="multipart/form-data" action="#" th:action="@{/channels}" th:object="${channel}">
+                        <div class="mb-3">
+                            <label for="channelFormTitle">Title</label>
+                            <input type="text" name="title" id="channelFormTitle" class="form-control"
+                                   placeholder="Channel title" th:field="*{title}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="channelFormDescription">Description</label>
+                            <input type="text" name="description" id="channelFormDescription" class="form-control"
+                                   placeholder="Channel description" th:field="*{description}">
+                        </div>
+                        <button class="btn btn-primary btn-block" type="submit">Update</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

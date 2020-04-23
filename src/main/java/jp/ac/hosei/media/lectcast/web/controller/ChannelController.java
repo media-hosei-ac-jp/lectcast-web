@@ -4,6 +4,7 @@ import jp.ac.hosei.media.lectcast.web.component.LectcastSession;
 import jp.ac.hosei.media.lectcast.web.data.Channel;
 import jp.ac.hosei.media.lectcast.web.data.Feed;
 import jp.ac.hosei.media.lectcast.web.data.Item;
+import jp.ac.hosei.media.lectcast.web.form.ChannelForm;
 import jp.ac.hosei.media.lectcast.web.form.ItemForm;
 import jp.ac.hosei.media.lectcast.web.repository.ChannelRepository;
 import jp.ac.hosei.media.lectcast.web.repository.FeedRepository;
@@ -93,8 +94,21 @@ public class ChannelController {
         return "channel/index";
     }
 
-    @PostMapping
-    public String handleFileUpload(final ItemForm itemForm,
+    @PostMapping("")
+    public String handleChannelUpdate(final ChannelForm channelForm,
+                                   final HttpSession httpSession, final UriComponentsBuilder builder) {
+        final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
+        final Channel channel = channelRepository.findById(lectcastSession.getChannel().getId());
+        channel.setTitle(channelForm.getTitle());
+        channel.setDescription(channelForm.getDescription());
+        channelRepository.save(channel);
+
+        final URI location = builder.path("/channels").build().toUri();
+        return "redirect:" + location.toString();
+    }
+
+    @PostMapping("item")
+    public String handleItemUpload(final ItemForm itemForm,
                                    final HttpSession httpSession, final UriComponentsBuilder builder) {
         final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
         final Item item = new Item();
@@ -136,6 +150,11 @@ public class ChannelController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> serveFile(@RequestParam("key") final String key) {
         return amazonS3Service.getObject(key, KEY_PREFIX);
+    }
+
+    @ModelAttribute(name = "channelForm")
+    public ChannelForm initChannelForm(){
+        return new ChannelForm();
     }
 
     @ModelAttribute(name = "itemForm")
