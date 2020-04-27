@@ -34,7 +34,7 @@ public class PodcastController {
     @Autowired
     private FeedRepository feedRepository;
 
-    @GetMapping("")
+    @GetMapping("/feed.xml")
     public void individualFeed(@RequestParam("feed") final String feedId, final HttpServletResponse response) throws IOException {
         final Feed feed = feedRepository.findById(feedId);
 

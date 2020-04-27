@@ -14,11 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpSession;
@@ -39,6 +39,10 @@ public class ChannelController {
 
     private static final String KEY_PREFIX = "audio";
 
+    private static final String[] AVAILABLE_EXTENSION = {"mp3", "m4a"};
+
+    private static final String INSTRUCTOR_NAME = "Instructor";
+
     @Autowired
     protected LectcastSession lectcastSession;
 
@@ -58,14 +62,17 @@ public class ChannelController {
     public String index(final HttpSession httpSession, final Model model) {
         final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
         if (null == lectcastSession) {
+            model.addAttribute("error", "Forbidden");
+            model.addAttribute("message", "Authentication required");
             return "error";
         }
 
-        final boolean isInstructor = lectcastSession.getUserRoles().contains("Instructor");
+        final boolean isInstructor = lectcastSession.getUserRoles().contains(INSTRUCTOR_NAME);
         model.addAttribute("isInstructor", isInstructor);
 
         // Get a channel
-        Channel channel = channelRepository.findByLtiContextIdAndLtiResourceLinkId(lectcastSession.getContextId(), lectcastSession.getResourceLinkId());
+        Channel channel = channelRepository.findByLtiContextIdAndLtiResourceLinkId(lectcastSession.getContextId(),
+                                                                                   lectcastSession.getResourceLinkId());
         if (null == channel) {
             if (isInstructor) {
                 channel = new Channel();
@@ -95,9 +102,16 @@ public class ChannelController {
     }
 
     @PostMapping("")
-    public String handleChannelUpdate(final ChannelForm channelForm,
-                                   final HttpSession httpSession, final UriComponentsBuilder builder) {
+    public String handleChannelUpdate(final ChannelForm channelForm, final HttpSession httpSession,
+                                      final UriComponentsBuilder builder, final Model model) {
         final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
+        if (null == lectcastSession || null == lectcastSession.getChannel() || ! lectcastSession.getUserRoles().contains(INSTRUCTOR_NAME)) {
+            model.addAttribute("error", "Forbidden");
+            model.addAttribute("message", "Authorization required");
+            return "error";
+        }
+
+        // Update the channel object
         final Channel channel = channelRepository.findById(lectcastSession.getChannel().getId());
         channel.setTitle(channelForm.getTitle());
         channel.setDescription(channelForm.getDescription());
@@ -108,17 +122,32 @@ public class ChannelController {
     }
 
     @PostMapping("item")
-    public String handleItemUpload(final ItemForm itemForm,
-                                   final HttpSession httpSession, final UriComponentsBuilder builder) {
+    public String handleItemUpload(final ItemForm itemForm, final HttpSession httpSession,
+                                   final UriComponentsBuilder builder, final Model model) {
         final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
+        if (null == lectcastSession || null == lectcastSession.getChannel() || ! lectcastSession.getUserRoles().contains(INSTRUCTOR_NAME)) {
+            model.addAttribute("error", "Forbidden");
+            model.addAttribute("message", "Authorization required");
+            return "error";
+        }
+
+        final String originalFileName = itemForm.getAudioFile().getOriginalFilename();
+        final String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+        if (! containsExtension(extension)) {
+            model.addAttribute("error", "Unsupported Filetype");
+            model.addAttribute("message", "Only " + String.join(", ", AVAILABLE_EXTENSION) + " is supported");
+            return "error";
+        }
+
         final Item item = new Item();
 
         File file = null;
         try {
             // Create a temporary file
-            final Path tmpPath = Files.createTempFile(Paths.get("/tmp"), "lectcast_", ".tmp");
+            final Path tmpPath = Files.createTempFile(Paths.get("/tmp"), "lectcast_", "." + extension);
             file = tmpPath.toFile();
 
+            // Write the temporary audio file
             final byte[] bytes = itemForm.getAudioFile().getBytes();
             final BufferedOutputStream uploadFileStream = new BufferedOutputStream(new FileOutputStream(file));
             uploadFileStream.write(bytes);
@@ -128,7 +157,7 @@ public class ChannelController {
             final String key = amazonS3Service.putObject(file, KEY_PREFIX, itemForm.getAudioFile().getContentType(),
                     itemForm.getAudioFile().getSize(), 600);
 
-            // Persist item object
+            // Persist an item object
             item.setChannel(lectcastSession.getChannel());
             item.setS3Key(key);
             item.setTitle(itemForm.getTitle());
@@ -148,7 +177,11 @@ public class ChannelController {
 
     @GetMapping("item/download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> serveFile(@RequestParam("key") final String key) {
+    public ResponseEntity<InputStreamResource> serveFile(@RequestParam("key") final String key, final HttpSession httpSession) {
+        final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
+        if (null == lectcastSession || null == lectcastSession.getChannel() || ! lectcastSession.getUserRoles().contains(INSTRUCTOR_NAME)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         return amazonS3Service.getObject(key, KEY_PREFIX);
     }
 
@@ -160,6 +193,15 @@ public class ChannelController {
     @ModelAttribute(name = "itemForm")
     public ItemForm initItemForm(){
         return new ItemForm();
+    }
+
+    private boolean containsExtension(final String extension){
+        for (final String availableExtension : AVAILABLE_EXTENSION) {
+            if (availableExtension.equalsIgnoreCase(extension)){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

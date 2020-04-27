@@ -15,7 +15,7 @@
         <p class="lead text-muted" th:if="${channel.description}" th:text="${channel.description}">Something short and
             leading about the channel.</p>
         <p>
-            <a href="#" th:href="@{/podcasts(feed=${feed.id})}" class="btn btn-primary my-2">RSS Feed</a>
+            <a href="#" th:href="@{/podcasts/feed.xml(feed=${feed.id})}" class="btn btn-primary my-2">RSS Feed</a>
         </p>
     </div>
 </section>
