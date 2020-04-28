@@ -13,7 +13,7 @@ import java.util.Date;
 @Service
 public class AmazonCloudFrontService {
 
-    private static final int EXPIRE = 5 * 60 * 1000; // 5 minute
+    private static final int EXPIRE = 7 * 24 * 60 * 60 * 1000; // 7 day
 
     @Value("${aws.cloudFront.distributionDomain}")
     private String distributionDomain;
