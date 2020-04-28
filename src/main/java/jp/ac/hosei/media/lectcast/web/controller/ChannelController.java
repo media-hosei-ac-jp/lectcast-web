@@ -179,7 +179,7 @@ public class ChannelController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> serveFile(@RequestParam("key") final String key, final HttpSession httpSession) {
         final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
-        if (null == lectcastSession || null == lectcastSession.getChannel() || ! lectcastSession.getUserRoles().contains(INSTRUCTOR_NAME)) {
+        if (null == lectcastSession || null == lectcastSession.getChannel()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         return amazonS3Service.getObject(key, KEY_PREFIX);
