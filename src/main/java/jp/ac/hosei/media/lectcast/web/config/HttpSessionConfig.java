@@ -7,13 +7,14 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import org.springframework.session.web.context.AbstractHttpSessionApplicationInitializer;
 import redis.clients.jedis.JedisPoolConfig;
 
 import java.time.Duration;
 
 @Configuration
-@EnableRedisHttpSession
-public class HttpSessionConfig {
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 100 * 60)
+public class HttpSessionConfig extends AbstractHttpSessionApplicationInitializer {
 
     @Value("${spring.redis.host}")
     private String redisHost;
