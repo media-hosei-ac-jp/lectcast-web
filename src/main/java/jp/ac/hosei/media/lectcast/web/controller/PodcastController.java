@@ -2,11 +2,14 @@ package jp.ac.hosei.media.lectcast.web.controller;
 
 import jp.ac.hosei.media.lectcast.web.data.Feed;
 import jp.ac.hosei.media.lectcast.web.repository.FeedRepository;
+import net.glxn.qrgen.core.image.ImageType;
+import net.glxn.qrgen.javase.QRCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +20,13 @@ import org.thymeleaf.spring5.expression.ThymeleafEvaluationContext;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.Locale;
 
 @Controller
@@ -60,6 +67,23 @@ public class PodcastController {
             PrintWriter writer = response.getWriter();
             writer.print(xml);
             writer.close();
+        }
+    }
+
+    @GetMapping(value = "qrcode.png", produces = MediaType.IMAGE_PNG_VALUE)
+    public void qrcode(@RequestParam("feed") final String feedId, @RequestParam("type") final String typeString,
+                       final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+        final Feed feed = feedRepository.findById(feedId);
+
+        if (null != feed) {
+            final OutputStream outputStream = response.getOutputStream();
+
+            String schema = request.getScheme();
+            if (typeString.equals("podcast")) {
+                schema = "podcast";
+            }
+            final String url = String.format("%s://%s/podcasts/feed.xml?feed=%s", schema, request.getServerName(), feedId);
+            QRCode.from(url).to(ImageType.PNG).withSize(200, 200).writeTo(outputStream);
         }
     }
 

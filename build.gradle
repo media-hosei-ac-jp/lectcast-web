@@ -16,6 +16,7 @@ bootJar {
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -30,6 +31,7 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.20'
     implementation 'redis.clients:jedis:3.2.0'
     implementation 'org.imsglobal:basiclti-util:1.2.0'
+    implementation 'com.github.kenglxn.QRGen:javase:2.6.0'
 
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.762')
     implementation 'com.amazonaws:aws-java-sdk-s3'
