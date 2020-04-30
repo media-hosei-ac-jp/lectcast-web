@@ -1,9 +1,11 @@
 package jp.ac.hosei.media.lectcast.web.repository;
 
 import jp.ac.hosei.media.lectcast.web.data.LtiKeypair;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface LtiKeypairRepository extends CrudRepository<LtiKeypair, Integer> {
+@Repository
+public interface LtiKeypairRepository extends JpaRepository<LtiKeypair, Integer> {
 
     LtiKeypair findByLtiKey(String ltiKey);
 
