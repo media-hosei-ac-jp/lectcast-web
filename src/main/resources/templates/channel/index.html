@@ -8,9 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="/web/web.main/static/css/lectcast.css" th:href="@{/css/lectcast.css}" rel="stylesheet" type="text/css">
     <title th:text="|${channel.title} - #{lectcast.app_name}|"></title>
 </head>
-<body>
+<body class="text-dark">
 <section class="my-3">
     <div class="container">
         <h1 class="jumbotron-heading" th:text="${channel.title}">Channel Title</h1>
@@ -19,23 +20,24 @@
     </div>
 </section>
 
-<main class="pb-3">
+<main class="py-3">
     <div class="container" th:if="${! #lists.isEmpty(channel.itemList)}">
-        <h3 th:text="#{lectcast.item.label}">Item</h3>
-        <article class="row justify-content-end my-3" th:each="item : ${channel.itemList}">
+        <article class="row justify-content-end my-3 py-2" th:each="item : ${channel.itemList}">
             <div class="col-12 col-md-6 col-xl-8">
-                <h4 class="mb-0" th:text="${item.title}">
+                <h4 class="mb-2" th:text="${item.title}">
                     Item Title
-                    <small class="text-muted">(
+                    <small class="text-muted">
+                        (
                         <time th:datetime="${item.createdAt}"
                               th:text="${#dates.format(item.createdAt, 'yyyy/MM/dd HH:mm')}">
                             yyyy/MM/dd HH:mm
                         </time>
-                        )</small>
+                        )
+                    </small>
                 </h4>
-                <p class="my-1" hosei:brtext="${item.description}">Item Description</p>
+                <p class="my-1 pl-4" hosei:brtext="${item.description}">Item Description</p>
             </div>
-            <div class="col-12 col-md-6 col-xl-4">
+            <div class="col-12 col-md-6 col-xl-4 mt-2 mt-md-0 text-md-right">
                 <audio src="#" th:src="@{/channels/item/download(key=${item.s3Key})}" controls>
                     <p th:text="#{lectcast.error.audio_tag_is_not_supported}"></p>
                 </audio>
@@ -47,18 +49,17 @@
     </div>
     <hr/>
     <div class="container accordion" id="guideAccordion">
-        <h3 th:text="#{lectcast.help.label}">Help</h3>
+        <h2 th:text="#{lectcast.help.label}">Help</h2>
         <div class="card">
             <div class="card-header" id="introductionHeader">
-                <h2 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#introduction"
-                            aria-expanded="false" aria-controls="introduction"
-                            th:text="#{lectcast.help.introduction.title}">
-                        Title
+                <h3 class="mb-0">
+                    <i class="fas fa-fw fa-info-circle"></i>
+                    <button class="btn btn-link pl-0" type="button" data-toggle="collapse" data-target="#introduction"
+                            aria-expanded="false" aria-controls="introduction">
+                        <span th:text="#{lectcast.help.introduction.title}">Title</span>
                     </button>
-                </h2>
+                </h3>
             </div>
-
             <div id="introduction" class="collapse show" aria-labelledby="introductionHeader"
                  data-parent="#guideAccordion">
                 <div class="card-body" th:text="#{lectcast.help.introduction.body}">
@@ -68,14 +69,14 @@
         </div>
         <div class="card">
             <div class="card-header" id="iosHeader">
-                <h2 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#iosGuide"
-                            aria-expanded="false" aria-controls="iosGuide" th:text="#{lectcast.help.ios.title}">
-                        Title
+                <h3 class="mb-0">
+                    <i class="fab fa-fw fa-apple"></i>
+                    <button class="btn btn-link pl-0" type="button" data-toggle="collapse" data-target="#iosGuide"
+                            aria-expanded="false" aria-controls="iosGuide">
+                        <span th:text="#{lectcast.help.ios.title}">Title</span>
                     </button>
-                </h2>
+                </h3>
             </div>
-
             <div id="iosGuide" class="collapse" aria-labelledby="iosHeader" data-parent="#guideAccordion"
                  th:with="feeduri=@{~/podcasts/feed.xml(feed=${feed.id})}, host=${#httpServletRequest.getServerName()}">
                 <div class="card-body" th:text="#{lectcast.help.ios.body}">
@@ -92,13 +93,13 @@
         </div>
         <div class="card">
             <div class="card-header" id="androidHeader">
-                <h2 class="mb-0">
-                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                            data-target="#androidGuide" aria-expanded="false" aria-controls="androidGuide"
-                            th:text="#{lectcast.help.android.title}">
-                        Title
+                <h3 class="mb-0">
+                    <i class="fab fa-fw fa-android"></i>
+                    <button class="btn btn-link pl-0" type="button" data-toggle="collapse"
+                            data-target="#androidGuide" aria-expanded="false" aria-controls="androidGuide">
+                        <span th:text="#{lectcast.help.android.title}">Title</span>
                     </button>
-                </h2>
+                </h3>
             </div>
             <div id="androidGuide" class="collapse" aria-labelledby="androidHeader" data-parent="#guideAccordion"
                  th:with="feeduri=@{~/podcasts/feed.xml(feed=${feed.id})}, host=${#httpServletRequest.getServerName()}">
@@ -107,7 +108,7 @@
                 </div>
                 <div class="form-group mx-3">
                     <label class="sr-only" for="androidFeedUrl" th:text="#{button.podcast_feed}">Feed</label>
-                    <div class="input-group mb-2 mx-3 mr-sm-2">
+                    <div class="input-group mb-2 mr-sm-2">
                         <input type="text" class="form-control" id="androidFeedUrl"
                                th:value="|https://${host}${feeduri}|">
                     </div>
@@ -120,7 +121,7 @@
 <footer class="pt-3 my-md-3 pt-md-4 border-top">
     <div class="container">
         <div th:if="${isInstructor}">
-            <h3 class="mb-3" th:text="#{lectcast.management}">Management Tools</h3>
+            <h2 class="mb-3" th:text="#{lectcast.management}">Management Tools</h2>
             <div class="row">
                 <div class="col-12 col-sm-4 col-lg-3">
                     <h5 class="mb-0" th:text="#{lectcast.item.upload}">Upload an Item</h5>
