@@ -43,6 +43,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'com.h2database:h2:latest.release'
+    testImplementation 'it.ozimov:embedded-redis:latest.release'
 }
 
 test {

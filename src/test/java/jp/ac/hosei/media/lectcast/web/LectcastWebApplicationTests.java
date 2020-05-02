@@ -1,22 +1,35 @@
 package jp.ac.hosei.media.lectcast.web;
 
-import jp.ac.hosei.media.lectcast.web.controller.ChannelController;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import redis.embedded.RedisServer;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = LectcastWebApplication.class,
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {"spring.redis.port=16379"})
 class LectcastWebApplicationTests {
 
-    @Autowired
-    private ChannelController channelController;
+  private static RedisServer redisServer;
 
-    @Test
-    void contextLoads() {
-        Assertions.assertNotNull(channelController);
-    }
+  @BeforeAll
+  static void init() {
+    // Start embedded redis server for test
+    redisServer = new RedisServer(16379);
+    redisServer.start();
+  }
+
+  @AfterAll
+  static void tearDown() {
+    // Stop embedded redis server
+    redisServer.stop();
+  }
+
+  @Test
+  void contextLoads() {
+
+  }
 
 }
