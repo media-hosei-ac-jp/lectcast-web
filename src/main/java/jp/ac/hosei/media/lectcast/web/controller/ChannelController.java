@@ -175,6 +175,30 @@ public class ChannelController {
         return "redirect:" + location.toString();
     }
 
+    @DeleteMapping("item/{id}")
+    @ResponseBody
+    public String deleteItem(@PathVariable final String id,
+        final HttpSession httpSession, final UriComponentsBuilder builder, final Model model) {
+        final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
+        if (null == lectcastSession || null == lectcastSession.getChannel() || ! lectcastSession.getUserRoles().contains(INSTRUCTOR_NAME)) {
+            model.addAttribute("error", "Forbidden");
+            model.addAttribute("message", "Authorization required");
+            return "error";
+        }
+
+        final Item item = itemRepository.findByIdAndChannel(id, lectcastSession.getChannel());
+        if (null == item) {
+            model.addAttribute("error", "Not found");
+            model.addAttribute("message", "Item not found");
+        }
+
+        item.setIsDeleted(1);
+        itemRepository.save(item);
+
+        final URI location = builder.path("/channels").build().toUri();
+        return "redirect:" + location.toString();
+    }
+
     @GetMapping("item/download")
     @ResponseBody
     public ResponseEntity<InputStreamResource> serveFile(@RequestParam("key") final String key, final HttpSession httpSession) {

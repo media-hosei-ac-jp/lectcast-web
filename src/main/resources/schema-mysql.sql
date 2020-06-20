@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   `description` TEXT(2048) NULL,
   `duration` INT UNSIGNED NOT NULL,
   `explicit` TINYINT(1) NOT NULL DEFAULT 0,
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
   PRIMARY KEY (`id`),

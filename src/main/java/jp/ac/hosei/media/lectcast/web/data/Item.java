@@ -8,11 +8,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import org.hibernate.annotations.Where;
 
 @Entity
 @EqualsAndHashCode
 @ToString
 @Table(name = "item")
+@Where(clause = "is_deleted = 0")
 public class Item implements Serializable {
 
     @Id
@@ -33,6 +35,8 @@ public class Item implements Serializable {
     private int duration;
 
     private int explicit;
+
+    private int isDeleted;
 
     @NotNull
     private Date createdAt;
@@ -94,6 +98,14 @@ public class Item implements Serializable {
 
     public void setExplicit(int explicit) {
         this.explicit = explicit;
+    }
+
+    public int getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(int isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public Date getCreatedAt() {
