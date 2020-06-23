@@ -12,6 +12,7 @@
         <div class="container">
             <h1 class="display-4 mb-4 font-weight-bold" th:if="${error}" th:text="${error}">ERROR</h1>
             <p class="pb-4" th:if="${message}" th:text="${message}">Message</p>
+            <p class="pb-4" th:if="${additional_message}" th:text="#{${additional_message}}">Additional Message</p>
         </div>
     </div>
 </div>

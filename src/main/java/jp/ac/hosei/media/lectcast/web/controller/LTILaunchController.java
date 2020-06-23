@@ -30,6 +30,7 @@ public class LTILaunchController {
                          final HttpSession httpSession, final UriComponentsBuilder builder) {
         if (!result.getSuccess()) {
             // LTI error
+            model.addAttribute("error", "LTI Error");
             model.addAttribute("message", result.getMessage());
             return "error";
         }

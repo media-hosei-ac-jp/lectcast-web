@@ -59,8 +59,9 @@ public class ChannelController {
     public String index(final HttpSession httpSession, final Model model) {
         final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
         if (null == lectcastSession) {
-            model.addAttribute("error", "Forbidden");
-            model.addAttribute("message", "Authentication required");
+            // 401 Unauthorized
+            model.addAttribute("error", "Unauthorized");
+            model.addAttribute("additional_message", "lectcast.error.unauthorized");
             return "error";
         }
 
@@ -102,9 +103,16 @@ public class ChannelController {
     public String handleChannelUpdate(final ChannelForm channelForm, final HttpSession httpSession,
                                       final UriComponentsBuilder builder, final Model model) {
         final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
-        if (null == lectcastSession || null == lectcastSession.getChannel() || ! lectcastSession.getUserRoles().contains(INSTRUCTOR_NAME)) {
+        if (null == lectcastSession) {
+            // 401 Unauthorized
+            model.addAttribute("error", "Unauthorized");
+            model.addAttribute("additional_message", "lectcast.error.unauthorized");
+            return "error";
+        }
+        if (null == lectcastSession.getChannel() || ! lectcastSession.getUserRoles().contains(INSTRUCTOR_NAME)) {
+            // 403 Forbidden
             model.addAttribute("error", "Forbidden");
-            model.addAttribute("message", "Authorization required");
+            model.addAttribute("additional_message", "lectcast.error.forbidden");
             return "error";
         }
 
@@ -122,9 +130,16 @@ public class ChannelController {
     public String handleItemUpload(final ItemForm itemForm, final HttpSession httpSession,
                                    final UriComponentsBuilder builder, final Model model) {
         final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
-        if (null == lectcastSession || null == lectcastSession.getChannel() || ! lectcastSession.getUserRoles().contains(INSTRUCTOR_NAME)) {
+        if (null == lectcastSession) {
+            // 401 Unauthorized
+            model.addAttribute("error", "Unauthorized");
+            model.addAttribute("additional_message", "lectcast.error.unauthorized");
+            return "error";
+        }
+        if (null == lectcastSession.getChannel() || ! lectcastSession.getUserRoles().contains(INSTRUCTOR_NAME)) {
+            // 403 Forbidden
             model.addAttribute("error", "Forbidden");
-            model.addAttribute("message", "Authorization required");
+            model.addAttribute("additional_message", "lectcast.error.forbidden");
             return "error";
         }
 
@@ -132,7 +147,7 @@ public class ChannelController {
         final String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
         if (! containsExtension(extension)) {
             model.addAttribute("error", "Unsupported Filetype");
-            model.addAttribute("message", "Only " + String.join(", ", AVAILABLE_EXTENSION) + " is supported");
+            model.addAttribute("additional_message", "lectcast.error.file_type_is_not_supported");
             return "error";
         }
 
@@ -177,16 +192,24 @@ public class ChannelController {
     public String deleteItem(@PathVariable final String id,
         final HttpSession httpSession, final UriComponentsBuilder builder, final Model model) {
         final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
-        if (null == lectcastSession || null == lectcastSession.getChannel() || ! lectcastSession.getUserRoles().contains(INSTRUCTOR_NAME)) {
+        if (null == lectcastSession) {
+            // 401 Unauthorized
+            model.addAttribute("error", "Unauthorized");
+            model.addAttribute("additional_message", "lectcast.error.unauthorized");
+            return "error";
+        }
+        if (null == lectcastSession.getChannel() || ! lectcastSession.getUserRoles().contains(INSTRUCTOR_NAME)) {
+          // 403 Forbiiden
             model.addAttribute("error", "Forbidden");
-            model.addAttribute("message", "Authorization required");
+            model.addAttribute("additional_message", "lectcast.error.forbidden");
             return "error";
         }
 
         final Item item = itemRepository.findByIdAndChannel(id, lectcastSession.getChannel());
         if (null == item) {
-            model.addAttribute("error", "Not found");
-            model.addAttribute("message", "Item not found");
+            // 401 Not Found
+            model.addAttribute("error", "Not Found");
+            model.addAttribute("additional_message", "lectcast.error.not_found");
         }
 
         item.setIsDeleted(1);
