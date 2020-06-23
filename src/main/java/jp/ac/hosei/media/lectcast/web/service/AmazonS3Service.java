@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.CacheControl;
@@ -46,6 +47,7 @@ public class AmazonS3Service {
             objectMetadata.setContentLength(contentLength);
             objectMetadata.setCacheControl("public, max-age=" + maxAge);
             getAmazonS3().putObject(bucketName, String.join("/", new String[]{COMMON_PREFIX, prefix, key}), inputStream, objectMetadata);
+            inputStream.close();    // Close the stream
             return key;
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -53,12 +55,20 @@ public class AmazonS3Service {
     }
 
     public ResponseEntity<InputStreamResource> getObject(final String key, final String prefix) {
-        final S3Object s3Object = getAmazonS3().getObject(bucketName, String.join("/", new String[]{COMMON_PREFIX, prefix, key}));
-        return ResponseEntity.ok()
+        try {
+            final S3Object s3Object = getAmazonS3()
+                .getObject(bucketName, String.join("/", new String[]{COMMON_PREFIX, prefix, key}));
+            final ResponseEntity<InputStreamResource> entity = ResponseEntity.ok()
                 .contentLength(s3Object.getObjectMetadata().getContentLength())
-                .contentType(MediaType.parseMediaType(s3Object.getObjectMetadata().getContentType()))
+                .contentType(
+                    MediaType.parseMediaType(s3Object.getObjectMetadata().getContentType()))
                 .cacheControl(CacheControl.maxAge(60, TimeUnit.MINUTES))
                 .body(new InputStreamResource(s3Object.getObjectContent()));
+            s3Object.close();   // Close the object
+            return entity;
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private AmazonS3 getAmazonS3() {
