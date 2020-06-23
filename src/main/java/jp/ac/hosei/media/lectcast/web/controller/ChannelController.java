@@ -44,9 +44,6 @@ public class ChannelController {
     private static final String INSTRUCTOR_NAME = "Instructor";
 
     @Autowired
-    protected LectcastSession lectcastSession;
-
-    @Autowired
     private AmazonS3Service amazonS3Service;
 
     @Autowired
