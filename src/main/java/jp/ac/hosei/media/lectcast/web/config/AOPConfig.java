@@ -12,12 +12,12 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @EnableAspectJAutoProxy
 public class AOPConfig {
 
-    @Autowired
-    private LtiKeySecretService lectcastLtiKeySecretService;
+  @Autowired
+  private LtiKeySecretService lectcastLtiKeySecretService;
 
-    @Bean
-    public LtiLaunchVerifier ltiLaunchVerifier() {
-        return new LtiLaunchVerifier(lectcastLtiKeySecretService, new LtiOauthVerifier());
-    }
+  @Bean
+  public LtiLaunchVerifier ltiLaunchVerifier() {
+    return new LtiLaunchVerifier(lectcastLtiKeySecretService, new LtiOauthVerifier());
+  }
 
 }

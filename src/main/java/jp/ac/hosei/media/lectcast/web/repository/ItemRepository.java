@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ItemRepository extends CrudRepository<Item, Integer> {
 
-    Iterable<Item> findAllByChannel(Channel channel);
+  Iterable<Item> findAllByChannel(Channel channel);
 
-    Item findByIdAndChannel(String id, Channel channel);
+  Item findByIdAndChannel(String id, Channel channel);
 
 }

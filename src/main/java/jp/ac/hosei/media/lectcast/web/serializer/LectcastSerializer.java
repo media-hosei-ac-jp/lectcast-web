@@ -10,7 +10,7 @@ public class LectcastSerializer extends JdkSerializationRedisSerializer {
   public Object deserialize(@Nullable byte[] bytes) {
     try {
       return super.deserialize(bytes);
-    } catch (SerializationException ex){
+    } catch (SerializationException ex) {
       // Called when session value deserialize fails
       return null;
     }

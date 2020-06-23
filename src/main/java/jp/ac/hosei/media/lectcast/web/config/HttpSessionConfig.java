@@ -1,5 +1,6 @@
 package jp.ac.hosei.media.lectcast.web.config;
 
+import java.time.Duration;
 import jp.ac.hosei.media.lectcast.web.serializer.LectcastSerializer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,46 +14,45 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 import org.springframework.session.web.context.AbstractHttpSessionApplicationInitializer;
 import redis.clients.jedis.JedisPoolConfig;
 
-import java.time.Duration;
-
 @Configuration
 @EnableRedisHttpSession(maxInactiveIntervalInSeconds = 100 * 60)
 public class HttpSessionConfig extends AbstractHttpSessionApplicationInitializer {
 
-    @Value("${spring.redis.host}")
-    private String redisHost;
+  @Value("${spring.redis.host}")
+  private String redisHost;
 
-    @Value("${spring.redis.port}")
-    private int redisPort;
+  @Value("${spring.redis.port}")
+  private int redisPort;
 
-    @Bean
-    public JedisConnectionFactory connectionFactory() {
-        final RedisStandaloneConfiguration hostConfiguration = new RedisStandaloneConfiguration();
-        hostConfiguration.setHostName(redisHost);
-        hostConfiguration.setPort(redisPort);
+  @Bean
+  public JedisConnectionFactory connectionFactory() {
+    final RedisStandaloneConfiguration hostConfiguration = new RedisStandaloneConfiguration();
+    hostConfiguration.setHostName(redisHost);
+    hostConfiguration.setPort(redisPort);
 
-        final JedisClientConfiguration.JedisClientConfigurationBuilder clientConfigurationBuilder = JedisClientConfiguration.builder();
-        clientConfigurationBuilder.usePooling();
-        clientConfigurationBuilder.connectTimeout(Duration.ofSeconds(60));
+    final JedisClientConfiguration.JedisClientConfigurationBuilder clientConfigurationBuilder = JedisClientConfiguration
+        .builder();
+    clientConfigurationBuilder.usePooling();
+    clientConfigurationBuilder.connectTimeout(Duration.ofSeconds(60));
 
-        return new JedisConnectionFactory(hostConfiguration, clientConfigurationBuilder.build());
-    }
+    return new JedisConnectionFactory(hostConfiguration, clientConfigurationBuilder.build());
+  }
 
-    @Bean
-    public JedisPoolConfig jedisPoolConfig(){
-        final JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(10);
-        poolConfig.setMaxIdle(5);
-        poolConfig.setMinIdle(1);
-        poolConfig.setTestOnBorrow(true);
-        poolConfig.setTestOnReturn(true);
-        poolConfig.setTestWhileIdle(true);
-        return poolConfig;
-    }
+  @Bean
+  public JedisPoolConfig jedisPoolConfig() {
+    final JedisPoolConfig poolConfig = new JedisPoolConfig();
+    poolConfig.setMaxTotal(10);
+    poolConfig.setMaxIdle(5);
+    poolConfig.setMinIdle(1);
+    poolConfig.setTestOnBorrow(true);
+    poolConfig.setTestOnReturn(true);
+    poolConfig.setTestWhileIdle(true);
+    return poolConfig;
+  }
 
-    @Bean
-    @Qualifier("springSessionDefaultRedisSerializer")
-    public RedisSerializer<Object> redisSerializer() {
-        return new LectcastSerializer();
-    }
+  @Bean
+  @Qualifier("springSessionDefaultRedisSerializer")
+  public RedisSerializer<Object> redisSerializer() {
+    return new LectcastSerializer();
+  }
 }

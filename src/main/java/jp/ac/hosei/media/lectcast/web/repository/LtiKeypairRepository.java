@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LtiKeypairRepository extends JpaRepository<LtiKeypair, Integer> {
 
-    LtiKeypair findByLtiKey(String ltiKey);
+  LtiKeypair findByLtiKey(String ltiKey);
 
 }

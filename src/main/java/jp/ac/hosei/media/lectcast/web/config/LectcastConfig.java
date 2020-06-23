@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class LectcastConfig {
 
-    @Bean
-    public HoseiDialect hoseiDialect() {
-        return new HoseiDialect();
-    }
+  @Bean
+  public HoseiDialect hoseiDialect() {
+    return new HoseiDialect();
+  }
 
 }

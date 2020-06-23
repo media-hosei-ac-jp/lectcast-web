@@ -1,14 +1,20 @@
 package jp.ac.hosei.media.lectcast.web.data;
 
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @EqualsAndHashCode
@@ -16,145 +22,145 @@ import java.util.List;
 @Table(name = "channel")
 public class Channel implements Serializable {
 
-    @Id
-    @GenericGenerator(name = "UuidGenerator", strategy = "jp.ac.hosei.media.lectcast.web.generator.UuidGenerator")
-    @GeneratedValue(generator = "UuidGenerator")
-    private String id;
+  @Id
+  @GenericGenerator(name = "UuidGenerator", strategy = "jp.ac.hosei.media.lectcast.web.generator.UuidGenerator")
+  @GeneratedValue(generator = "UuidGenerator")
+  private String id;
 
-    private String ltiContextId;
+  private String ltiContextId;
 
-    private String ltiResourceLinkId;
+  private String ltiResourceLinkId;
 
-    private String title;
+  private String title;
 
-    private String author;
+  private String author;
 
-    private String description;
+  private String description;
 
-    private int explicit;
+  private int explicit;
 
-    private String image;
+  private String image;
 
-    private String language;
+  private String language;
 
-    @NotNull
-    private Date createdAt;
+  @NotNull
+  private Date createdAt;
 
-    @NotNull
-    private Date updatedAt;
+  @NotNull
+  private Date updatedAt;
 
-    @OneToMany(mappedBy = "channel")
-    @OrderBy("createdAt DESC")
-    private List<Item> itemList;
+  @OneToMany(mappedBy = "channel")
+  @OrderBy("createdAt DESC")
+  private List<Item> itemList;
 
-    @OneToMany(mappedBy = "channel")
-    private List<Feed> feedList;
+  @OneToMany(mappedBy = "channel")
+  private List<Feed> feedList;
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public String getLtiContextId() {
-        return ltiContextId;
-    }
+  public String getLtiContextId() {
+    return ltiContextId;
+  }
 
-    public void setLtiContextId(String contextId) {
-        this.ltiContextId = contextId;
-    }
+  public void setLtiContextId(String contextId) {
+    this.ltiContextId = contextId;
+  }
 
-    public String getLtiResourceLinkId() {
-        return ltiResourceLinkId;
-    }
+  public String getLtiResourceLinkId() {
+    return ltiResourceLinkId;
+  }
 
-    public void setLtiResourceLinkId(String resourceLinkId) {
-        this.ltiResourceLinkId = resourceLinkId;
-    }
+  public void setLtiResourceLinkId(String resourceLinkId) {
+    this.ltiResourceLinkId = resourceLinkId;
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public String getAuthor() {
-        return author;
-    }
+  public String getAuthor() {
+    return author;
+  }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+  public void setAuthor(String author) {
+    this.author = author;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public int getExplicit() {
-        return explicit;
-    }
+  public int getExplicit() {
+    return explicit;
+  }
 
-    public void setExplicit(int explicit) {
-        this.explicit = explicit;
-    }
+  public void setExplicit(int explicit) {
+    this.explicit = explicit;
+  }
 
-    public String getImage() {
-        return image;
-    }
+  public String getImage() {
+    return image;
+  }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
+  public void setImage(String image) {
+    this.image = image;
+  }
 
-    public String getLanguage() {
-        return language;
-    }
+  public String getLanguage() {
+    return language;
+  }
 
-    public void setLanguage(String language) {
-        this.language = language;
-    }
+  public void setLanguage(String language) {
+    this.language = language;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
 
-    public List<Item> getItemList() {
-        return itemList;
-    }
+  public List<Item> getItemList() {
+    return itemList;
+  }
 
-    public void setItemList(List<Item> itemList) {
-        this.itemList = itemList;
-    }
+  public void setItemList(List<Item> itemList) {
+    this.itemList = itemList;
+  }
 
-    @PrePersist
-    public void onPrePersist() {
-        setCreatedAt(new Date());
-        setUpdatedAt(new Date());
-    }
+  @PrePersist
+  public void onPrePersist() {
+    setCreatedAt(new Date());
+    setUpdatedAt(new Date());
+  }
 
-    @PreUpdate
-    public void onPreUpdate() {
-        setUpdatedAt(new Date());
-    }
+  @PreUpdate
+  public void onPreUpdate() {
+    setUpdatedAt(new Date());
+  }
 
 }

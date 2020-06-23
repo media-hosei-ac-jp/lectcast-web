@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FeedRepository extends CrudRepository<Feed, Integer> {
 
-    Feed findById(String id);
+  Feed findById(String id);
 
-    Feed findByChannelAndLtiUserId(Channel channel, String ltiUserId);
+  Feed findByChannelAndLtiUserId(Channel channel, String ltiUserId);
 
 }
