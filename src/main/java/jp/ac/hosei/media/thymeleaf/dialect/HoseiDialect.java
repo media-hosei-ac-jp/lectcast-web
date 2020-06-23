@@ -18,10 +18,10 @@ public class HoseiDialect extends AbstractProcessorDialect {
 
   @Override
   public Set<IProcessor> getProcessors(String dialectPrefix) {
-    Set<IProcessor> proccessors = new HashSet<>();
+    Set<IProcessor> processors = new HashSet<>();
 
-    proccessors.add(new BreakLineProcessor(dialectPrefix, getDialectProcessorPrecedence()));
+    processors.add(new BreakLineProcessor(dialectPrefix, getDialectProcessorPrecedence()));
 
-    return proccessors;
+    return processors;
   }
 }

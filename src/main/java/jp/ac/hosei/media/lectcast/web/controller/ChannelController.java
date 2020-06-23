@@ -155,7 +155,7 @@ public class ChannelController {
     final String originalFileName = itemForm.getAudioFile().getOriginalFilename();
     final String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
     if (!containsExtension(extension)) {
-      model.addAttribute("error", "Unsupported Filetype");
+      model.addAttribute("error", "Unsupported FileType");
       model.addAttribute("additional_message", "lectcast.error.file_type_is_not_supported");
       return "error";
     }
@@ -211,7 +211,7 @@ public class ChannelController {
     }
     if (null == lectcastSession.getChannel() || !lectcastSession.getUserRoles()
         .contains(INSTRUCTOR_NAME)) {
-      // 403 Forbiiden
+      // 403 Forbidden
       model.addAttribute("error", "Forbidden");
       model.addAttribute("additional_message", "lectcast.error.forbidden");
       return "error";
