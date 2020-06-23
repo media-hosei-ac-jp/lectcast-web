@@ -2,8 +2,6 @@ package jp.ac.hosei.media.lectcast.web;
 
 import java.util.Collections;
 import java.util.Map;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.SessionTrackingMode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -43,18 +41,14 @@ public class LectcastWebApplication {
   public ServletContextInitializer servletContextInitializer(
       @Value("${secure.cookie}") boolean secure) {
 
-    ServletContextInitializer servletContextInitializer = new ServletContextInitializer() {
-      @Override
-      public void onStartup(ServletContext servletContext) throws ServletException {
-        servletContext.getSessionCookieConfig().setHttpOnly(true);
-        servletContext.getSessionCookieConfig().setSecure(secure);
-        servletContext.getSessionCookieConfig().setMaxAge(60);
-        servletContext.setSessionTrackingModes(
-            Collections.singleton(SessionTrackingMode.COOKIE)
-        );
-      }
+    return servletContext -> {
+      servletContext.getSessionCookieConfig().setHttpOnly(true);
+      servletContext.getSessionCookieConfig().setSecure(secure);
+      servletContext.getSessionCookieConfig().setMaxAge(60);
+      servletContext.setSessionTrackingModes(
+          Collections.singleton(SessionTrackingMode.COOKIE)
+      );
     };
-    return servletContextInitializer;
   }
 
   @RequestMapping("/")

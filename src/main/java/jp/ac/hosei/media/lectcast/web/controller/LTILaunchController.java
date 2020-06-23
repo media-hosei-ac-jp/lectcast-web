@@ -18,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Controller
 public class LTILaunchController {
 
+  @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(LTILaunchController.class);
 
   @Autowired

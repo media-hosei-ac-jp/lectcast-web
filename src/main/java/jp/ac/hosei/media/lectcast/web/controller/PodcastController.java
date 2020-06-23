@@ -30,6 +30,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 @RequestMapping(path = "/podcasts")
 public class PodcastController {
 
+  @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(PodcastController.class);
 
   @Autowired

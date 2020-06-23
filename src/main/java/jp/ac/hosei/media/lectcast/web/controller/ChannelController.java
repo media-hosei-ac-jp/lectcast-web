@@ -41,6 +41,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping(path = "/channels")
 public class ChannelController {
 
+  @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(ChannelController.class);
 
   private static final String KEY_PREFIX = "audio";
@@ -222,6 +223,7 @@ public class ChannelController {
       // 401 Not Found
       model.addAttribute("error", "Not Found");
       model.addAttribute("additional_message", "lectcast.error.not_found");
+      return "error";
     }
 
     item.setIsDeleted(1);
