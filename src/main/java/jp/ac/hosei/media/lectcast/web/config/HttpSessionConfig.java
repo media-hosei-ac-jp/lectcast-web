@@ -1,11 +1,14 @@
 package jp.ac.hosei.media.lectcast.web.config;
 
+import jp.ac.hosei.media.lectcast.web.serializer.LectcastSerializer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.session.web.context.AbstractHttpSessionApplicationInitializer;
 import redis.clients.jedis.JedisPoolConfig;
@@ -45,5 +48,11 @@ public class HttpSessionConfig extends AbstractHttpSessionApplicationInitializer
         poolConfig.setTestOnReturn(true);
         poolConfig.setTestWhileIdle(true);
         return poolConfig;
+    }
+
+    @Bean
+    @Qualifier("springSessionDefaultRedisSerializer")
+    public RedisSerializer<Object> redisSerializer() {
+        return new LectcastSerializer();
     }
 }
