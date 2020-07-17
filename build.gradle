@@ -36,6 +36,7 @@ dependencies {
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.762')
     implementation 'com.amazonaws:aws-java-sdk-s3'
     implementation 'com.amazonaws:aws-java-sdk-cloudfront'
+    implementation 'com.amazonaws:aws-java-sdk-mediaconvert'
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

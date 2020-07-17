@@ -1,5 +1,6 @@
 package jp.ac.hosei.media.lectcast.web.controller;
 
+import com.amazonaws.services.mediaconvert.model.CreateJobResult;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,6 +19,7 @@ import jp.ac.hosei.media.lectcast.web.form.ItemForm;
 import jp.ac.hosei.media.lectcast.web.repository.ChannelRepository;
 import jp.ac.hosei.media.lectcast.web.repository.FeedRepository;
 import jp.ac.hosei.media.lectcast.web.repository.ItemRepository;
+import jp.ac.hosei.media.lectcast.web.service.AmazonMediaConvertService;
 import jp.ac.hosei.media.lectcast.web.service.AmazonS3Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +54,9 @@ public class ChannelController {
 
   @Autowired
   private AmazonS3Service amazonS3Service;
+
+  @Autowired
+  private AmazonMediaConvertService amazonMediaConvertService;
 
   @Autowired
   private ChannelRepository channelRepository;
@@ -180,6 +185,10 @@ public class ChannelController {
       final String key = amazonS3Service
           .putObject(file, KEY_PREFIX, itemForm.getAudioFile().getContentType(),
               itemForm.getAudioFile().getSize(), 600);
+
+      // Create a convert job
+      final CreateJobResult result = amazonMediaConvertService.create(key);
+      logger.debug("JobID: " + result.getJob().getId());
 
       // Persist an item object
       item.setChannel(lectcastSession.getChannel());
