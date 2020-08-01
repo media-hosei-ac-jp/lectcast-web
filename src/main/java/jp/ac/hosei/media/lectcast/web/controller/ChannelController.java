@@ -1,6 +1,5 @@
 package jp.ac.hosei.media.lectcast.web.controller;
 
-import com.amazonaws.services.mediaconvert.model.CreateJobResult;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,6 +8,8 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import javax.servlet.http.HttpSession;
 import jp.ac.hosei.media.lectcast.web.component.LectcastSession;
 import jp.ac.hosei.media.lectcast.web.data.Channel;
@@ -21,6 +22,8 @@ import jp.ac.hosei.media.lectcast.web.repository.FeedRepository;
 import jp.ac.hosei.media.lectcast.web.repository.ItemRepository;
 import jp.ac.hosei.media.lectcast.web.service.AmazonMediaConvertService;
 import jp.ac.hosei.media.lectcast.web.service.AmazonS3Service;
+import jp.ac.hosei.media.lectcast.web.service.LocalConvertService;
+import net.bramp.ffmpeg.probe.FFmpegFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +51,9 @@ public class ChannelController {
 
   private static final String KEY_PREFIX = "audio";
 
-  private static final String[] AVAILABLE_EXTENSION = {"mp3", "m4a"};
+  private static final String KEY_ORIGINAL_PREFIX = "original";
+
+  private static final String[] AVAILABLE_EXTENSION = {"mp3", "m4a", "wma"};
 
   private static final String INSTRUCTOR_NAME = "Instructor";
 
@@ -57,6 +62,9 @@ public class ChannelController {
 
   @Autowired
   private AmazonMediaConvertService amazonMediaConvertService;
+
+  @Autowired
+  private LocalConvertService localConvertService;
 
   @Autowired
   private ChannelRepository channelRepository;
@@ -159,7 +167,10 @@ public class ChannelController {
     }
 
     final String originalFileName = itemForm.getAudioFile().getOriginalFilename();
+    assert originalFileName != null : "The original filename must be set.";
     final String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+    final String fileName = originalFileName
+        .substring(0, originalFileName.length() - (extension.length() + 1));
     if (!containsExtension(extension)) {
       model.addAttribute("error", "Unsupported FileType");
       model.addAttribute("additional_message", "lectcast.error.file_type_is_not_supported");
@@ -167,45 +178,120 @@ public class ChannelController {
     }
 
     final Item item = new Item();
+    final String key = amazonS3Service.generateKey();
 
-    File file = null;
+    File originalFile = null;
+    File convertedFile = null;
     try {
       // Create a temporary file
       final Path tmpPath = Files.createTempFile(Paths.get("/tmp"), "lectcast_", "." + extension);
-      file = tmpPath.toFile();
+      originalFile = tmpPath.toFile();
 
       // Write the temporary audio file
       final byte[] bytes = itemForm.getAudioFile().getBytes();
       final BufferedOutputStream uploadFileStream = new BufferedOutputStream(
-          new FileOutputStream(file));
+          new FileOutputStream(originalFile));
       uploadFileStream.write(bytes);
       uploadFileStream.close();
 
-      // Put an audio object
-      final String key = amazonS3Service
-          .putObject(file, KEY_PREFIX, itemForm.getAudioFile().getContentType(),
-              itemForm.getAudioFile().getSize(), 600);
+      // Check file format
+      final FFmpegFormat fileFormat = localConvertService.getFormat(tmpPath.toString());
+      final double duration = fileFormat.duration;
+      final String formatLongName = fileFormat.format_long_name;
+
+      CompletableFuture<String> convert = null;
+
+      switch (formatLongName) {
+        case "ASF (Advanced / Active Streaming Format)":
+          // wmapro, wmav2: convert needs
+          // Local convert
+          convert = localConvertService.convert(tmpPath.toString());
+          break;
+        case "MP2/3 (MPEG audio layer 2/3)":
+          // mp3
+          break;
+        case "QuickTime / MOV":
+          // m4a
+          break;
+        default:
+          model.addAttribute("error", "Unsupported FileFormat");
+          model.addAttribute("additional_message", "lectcast.error.file_type_is_not_supported");
+          return "error";
+      }
+
+      // Put an original audio object
+      amazonS3Service.putObject(
+          originalFile,
+          key,
+          fileName + "." + extension,
+          KEY_ORIGINAL_PREFIX,
+          itemForm.getAudioFile().getContentType(),
+          itemForm.getAudioFile().getSize(),
+          600);
 
       // Create a convert job
-      final CreateJobResult result = amazonMediaConvertService.create(key);
-      logger.debug("JobID: " + result.getJob().getId());
+      //final CreateJobResult result = amazonMediaConvertService.create(key);
+      //logger.debug("JobID: " + result.getJob().getId());
+
+      if (null != convert) {
+        // Wait an async process
+        CompletableFuture.allOf(convert).join();
+
+        final String convertedFilePathString = convert.get();
+
+        convertedFile = new File(convertedFilePathString);
+
+        // Put a converted audio object
+        amazonS3Service.putObject(
+            convertedFile,
+            key,
+            fileName + ".mp3",
+            KEY_ORIGINAL_PREFIX,
+            "audio/mpeg",
+            convertedFile.length(),
+            600);
+      }
 
       // Persist an item object
       item.setChannel(lectcastSession.getChannel());
       item.setS3Key(key);
       item.setTitle(itemForm.getTitle());
       item.setDescription(itemForm.getDescription());
+      item.setDuration((int) duration);
       itemRepository.save(item);
-    } catch (IOException e) {
+    } catch (IOException | InterruptedException | ExecutionException e) {
       e.printStackTrace();
     } finally {
-      if (file != null && file.exists()) {
-        file.delete();
+      // Delete files if exist
+      if (originalFile != null && originalFile.exists()) {
+        originalFile.delete();
+      }
+      if (convertedFile != null && convertedFile.exists()) {
+        convertedFile.delete();
       }
     }
 
     final URI location = builder.path("/channels").build().toUri();
     return "redirect:" + location.toString();
+  }
+
+  @GetMapping("item/{id}")
+  @ResponseBody
+  public ResponseEntity<InputStreamResource> getItem(@PathVariable final String id,
+      final HttpSession httpSession, final UriComponentsBuilder builder, final Model model) {
+    final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
+    if (null == lectcastSession) {
+      // 401 Unauthorized
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    final Item item = itemRepository.findByIdAndChannel(id, lectcastSession.getChannel());
+    if (null == item) {
+      // 401 Not Found
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    return amazonS3Service.getObject(item.getS3Key() + "/" + item.getS3Key() + ".m3u8", "hls");
   }
 
   @DeleteMapping("item/{id}")
