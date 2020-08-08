@@ -8,8 +8,13 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import jp.ac.hosei.media.lectcast.web.component.LectcastSession;
 import jp.ac.hosei.media.lectcast.web.data.Channel;
@@ -20,7 +25,7 @@ import jp.ac.hosei.media.lectcast.web.form.ItemForm;
 import jp.ac.hosei.media.lectcast.web.repository.ChannelRepository;
 import jp.ac.hosei.media.lectcast.web.repository.FeedRepository;
 import jp.ac.hosei.media.lectcast.web.repository.ItemRepository;
-import jp.ac.hosei.media.lectcast.web.service.AmazonMediaConvertService;
+import jp.ac.hosei.media.lectcast.web.service.AmazonCloudFrontService;
 import jp.ac.hosei.media.lectcast.web.service.AmazonS3Service;
 import jp.ac.hosei.media.lectcast.web.service.LocalConvertService;
 import net.bramp.ffmpeg.probe.FFmpegFormat;
@@ -49,7 +54,7 @@ public class ChannelController {
   @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(ChannelController.class);
 
-  private static final String KEY_PREFIX = "audio";
+  private static final String KEY_PREFIX = "converted";
 
   private static final String KEY_ORIGINAL_PREFIX = "original";
 
@@ -61,7 +66,7 @@ public class ChannelController {
   private AmazonS3Service amazonS3Service;
 
   @Autowired
-  private AmazonMediaConvertService amazonMediaConvertService;
+  private AmazonCloudFrontService amazonCloudFrontService;
 
   @Autowired
   private LocalConvertService localConvertService;
@@ -76,7 +81,8 @@ public class ChannelController {
   private FeedRepository feedRepository;
 
   @GetMapping
-  public String index(final HttpSession httpSession, final Model model) {
+  public String index(final HttpSession httpSession, final HttpServletResponse response,
+      final Model model) {
     final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
     if (null == lectcastSession) {
       // 401 Unauthorized
@@ -115,6 +121,16 @@ public class ChannelController {
       feedRepository.save(feed);
     }
     model.addAttribute("feed", feed);
+
+    // Set cookies
+    try {
+      final List<Cookie> cookieList = amazonCloudFrontService.getSignedCookies(channel.getId());
+      for (final Cookie cookie : cookieList) {
+        response.addCookie(cookie);
+      }
+    } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+      e.printStackTrace();
+    }
 
     httpSession.setAttribute("lectcast", lectcastSession);
     return "channel/index";
@@ -178,7 +194,7 @@ public class ChannelController {
     }
 
     final Item item = new Item();
-    final String key = amazonS3Service.generateKey();
+    final String itemS3Key = amazonS3Service.generateKey();
 
     File originalFile = null;
     File convertedFile = null;
@@ -220,11 +236,11 @@ public class ChannelController {
       }
 
       // Put an original audio object
+      final String originalKey = amazonS3Service
+          .getOriginalKey(lectcastSession.getChannel().getId(), itemS3Key, fileName, extension);
       amazonS3Service.putObject(
           originalFile,
-          key,
-          fileName + "." + extension,
-          KEY_ORIGINAL_PREFIX,
+          originalKey,
           itemForm.getAudioFile().getContentType(),
           itemForm.getAudioFile().getSize(),
           600);
@@ -240,13 +256,13 @@ public class ChannelController {
         final String convertedFilePathString = convert.get();
 
         convertedFile = new File(convertedFilePathString);
+        final String convertedKey = amazonS3Service
+            .getOriginalKey(lectcastSession.getChannel().getId(), itemS3Key, fileName, "mp3");
 
         // Put a converted audio object
         amazonS3Service.putObject(
             convertedFile,
-            key,
-            fileName + ".mp3",
-            KEY_ORIGINAL_PREFIX,
+            convertedKey,
             "audio/mpeg",
             convertedFile.length(),
             600);
@@ -254,7 +270,7 @@ public class ChannelController {
 
       // Persist an item object
       item.setChannel(lectcastSession.getChannel());
-      item.setS3Key(key);
+      item.setS3Key(itemS3Key);
       item.setTitle(itemForm.getTitle());
       item.setDescription(itemForm.getDescription());
       item.setDuration((int) duration);

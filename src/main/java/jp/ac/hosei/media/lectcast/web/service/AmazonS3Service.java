@@ -29,6 +29,12 @@ public class AmazonS3Service {
   @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(AmazonS3Service.class);
 
+  private static final String KEY_ORIGINAL_PREFIX = "original";
+
+  private static final String KEY_STREAMING_PREFIX = "streaming";
+
+  private static final String KEY_CONVERTED_PREFIX = "converted";
+
   private static final String COMMON_PREFIX = "files";
 
   @Value("${aws.accessKeyId}")
@@ -47,8 +53,7 @@ public class AmazonS3Service {
     return UUID.randomUUID().toString();
   }
 
-  public PutObjectResult putObject(final File file, final String key, final String fileName,
-      final String prefix, final String contentType,
+  public PutObjectResult putObject(final File file, final String key, final String contentType,
       final long contentLength, final int maxAge) {
     try {
       final InputStream inputStream = new FileInputStream(file);
@@ -57,9 +62,7 @@ public class AmazonS3Service {
       objectMetadata.setContentLength(contentLength);
       objectMetadata.setCacheControl("public, max-age=" + maxAge);
       final PutObjectResult result = getAmazonS3()
-          .putObject(bucketName,
-              String.join("/", new String[]{COMMON_PREFIX, prefix, key, fileName}),
-              inputStream, objectMetadata);
+          .putObject(bucketName, key, inputStream, objectMetadata);
       inputStream.close();    // Close the stream
       return result;
     } catch (final Exception e) {
@@ -70,7 +73,7 @@ public class AmazonS3Service {
   public ResponseEntity<InputStreamResource> getObject(final String key, final String prefix) {
     try {
       final S3Object s3Object = getAmazonS3()
-          .getObject(bucketName, String.join("/", new String[]{COMMON_PREFIX, prefix, key}));
+          .getObject(bucketName, String.join("/", new String[]{prefix, key + ".mp3"}));
       final BufferedInputStream bufferedInputStream = new BufferedInputStream(
           s3Object.getObjectContent());
 
@@ -85,6 +88,18 @@ public class AmazonS3Service {
     } catch (final IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public String getOriginalKey(final String channelId, final String itemS3Key, final String fileName, final String extension) {
+    return String.join("/", new String[]{KEY_ORIGINAL_PREFIX, channelId, itemS3Key, fileName}) + "." + extension;
+  }
+
+  public String getStreamingKey(final String channelId, final String itemS3Key) {
+    return String.join("/", new String[]{KEY_STREAMING_PREFIX, channelId, itemS3Key}) + "_hls.m3u8";
+  }
+
+  public String getConvertedKey(final String channelId, final String itemS3Key) {
+    return String.join("/", new String[]{KEY_CONVERTED_PREFIX, channelId, itemS3Key}) + ".mp3";
   }
 
   private AmazonS3 getAmazonS3() {
