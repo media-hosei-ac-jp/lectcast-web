@@ -44,3 +44,7 @@ h4:before {
 div.card-header i {
     font-size: 1.2rem;
 }
+
+:not(.vjs-has-started) .vjs-control-bar {
+    display: flex;
+}

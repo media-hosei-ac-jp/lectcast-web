@@ -10,6 +10,7 @@
         href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
         rel="stylesheet">
+  <link href="https://vjs.zencdn.net/7.8.4/video-js.css" rel="stylesheet"/>
   <link href="../../static/css/lectcast.css" rel="stylesheet" th:href="@{/css/lectcast.css}"
         type="text/css">
   <title th:text="|${channel.title} - #{lectcast.app_name}|"></title>
@@ -44,9 +45,11 @@
         <p class="my-1 pl-4" hosei:brtext="${item.description}">Item Description</p>
       </div>
       <div class="col-12 col-md-6 col-xl-4 mt-2 mt-md-0 text-md-right">
-        <audio controls src="#"
-               th:src="${@amazonCloudFrontService.getStreamingFileUrlFromItem(item)}">
-          <p th:text="#{lectcast.error.audio_tag_is_not_supported}"></p>
+        <audio class="video-js" data-setup='{"bigPlayButton": false, "controls": true, "controlBar": {"pictureInPictureToggle": false, "fullscreenToggle": false}, "height": 30, "flash": {"hls": {"withCredentials": true}}, "html5": {"hls": {"withCredentials": true}}, "preload": "none", "width": 300}'>
+          <source src="#" th:src="${@amazonCloudFrontService.getStreamingFileUrlFromItem(item)}"
+                  type="application/x-mpegURL">
+          <p class="vjs-no-js" th:text="#{lectcast.error.audio_tag_is_not_supported}">Not
+            supported</p>
         </audio>
       </div>
     </article>
@@ -183,6 +186,7 @@
 <script crossorigin="anonymous"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://vjs.zencdn.net/7.8.4/video.js"></script>
 <script crossorigin="anonymous" src="https://kit.fontawesome.com/933e54be06.js"></script>
 <script th:inline="javascript" type="application/javascript">
   /*<![CDATA[*/

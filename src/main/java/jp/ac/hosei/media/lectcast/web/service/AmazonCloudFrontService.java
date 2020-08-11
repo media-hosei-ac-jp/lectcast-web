@@ -87,21 +87,21 @@ public class AmazonCloudFrontService {
     final Cookie cookiePolicy = new Cookie(cookies.getPolicy().getKey(),
         cookies.getPolicy().getValue());
     cookiePolicy.setDomain(lectcastDomain);
-    cookiePolicy.setHttpOnly(true);
+    cookiePolicy.setHttpOnly(false);
     cookiePolicy.setSecure(isSecure);
     cookieList.add(cookiePolicy);
 
     final Cookie cookieSignature = new Cookie(cookies.getSignature().getKey(),
         cookies.getSignature().getValue());
     cookieSignature.setDomain(lectcastDomain);
-    cookieSignature.setHttpOnly(true);
+    cookieSignature.setHttpOnly(false);
     cookieSignature.setSecure(isSecure);
     cookieList.add(cookieSignature);
 
     final Cookie cookieKeyPairId = new Cookie(cookies.getKeyPairId().getKey(),
         cookies.getKeyPairId().getValue());
     cookieKeyPairId.setDomain(lectcastDomain);
-    cookieKeyPairId.setHttpOnly(true);
+    cookieKeyPairId.setHttpOnly(false);
     cookieKeyPairId.setSecure(isSecure);
     cookieList.add(cookieKeyPairId);
 
