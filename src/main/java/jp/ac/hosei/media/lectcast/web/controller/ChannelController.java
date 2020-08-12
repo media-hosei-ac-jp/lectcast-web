@@ -218,16 +218,12 @@ public class ChannelController {
       CompletableFuture<String> convert = null;
 
       switch (formatLongName) {
-        case "ASF (Advanced / Active Streaming Format)":
-          // wmapro, wmav2: convert needs
+        case "ASF (Advanced / Active Streaming Format)":  // wmapro, wmav2: convert needs
+        case "QuickTime / MOV":                           // m4a: convert needs
           // Local convert
           convert = localConvertService.convert(tmpPath.toString());
           break;
-        case "MP2/3 (MPEG audio layer 2/3)":
-          // mp3
-          break;
-        case "QuickTime / MOV":
-          // m4a
+        case "MP2/3 (MPEG audio layer 2/3)":              // mp3
           break;
         default:
           model.addAttribute("error", "Unsupported FileFormat");
