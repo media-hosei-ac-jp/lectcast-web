@@ -268,6 +268,7 @@ public class ChannelController {
       item.setChannel(lectcastSession.getChannel());
       item.setS3Key(itemS3Key);
       item.setTitle(itemForm.getTitle());
+      item.setFilename(originalFileName);
       item.setDescription(itemForm.getDescription());
       item.setDuration((int) duration);
       itemRepository.save(item);

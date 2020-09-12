@@ -34,6 +34,8 @@ public class Item implements Serializable {
   @Column(name = "s3_key")
   private String s3Key;
 
+  private String filename;
+
   private String title;
 
   private String description;
@@ -41,6 +43,8 @@ public class Item implements Serializable {
   private int duration;
 
   private int explicit;
+
+  private int isConverted;
 
   private int isDeleted;
 
@@ -74,6 +78,14 @@ public class Item implements Serializable {
     this.s3Key = s3Key;
   }
 
+  public String getFilename() {
+    return filename;
+  }
+
+  public void setFilename(String filename) {
+    this.filename = filename;
+  }
+
   public String getTitle() {
     return title;
   }
@@ -104,6 +116,14 @@ public class Item implements Serializable {
 
   public void setExplicit(int explicit) {
     this.explicit = explicit;
+  }
+
+  public int getIsConverted() {
+    return isConverted;
+  }
+
+  public void setIsConverted(int isConverted) {
+    this.isConverted = isConverted;
   }
 
   public int getIsDeleted() {
