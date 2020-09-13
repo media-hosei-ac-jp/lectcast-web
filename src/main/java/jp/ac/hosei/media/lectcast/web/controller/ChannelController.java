@@ -200,13 +200,13 @@ public class ChannelController {
       switch (formatLongName) {
         case "ASF (Advanced / Active Streaming Format)":
           // wmapro, wmav2: convert needs
-        case "QuickTime / MOV":
-          // m4a
           // Local convert
           convert = localConvertService.convert(tmpPath.toString());
           break;
         case "MP2/3 (MPEG audio layer 2/3)":
           // mp3
+        case "QuickTime / MOV":
+          // m4a
           break;
         default:
           model.addAttribute("error", "Unsupported FileFormat");
