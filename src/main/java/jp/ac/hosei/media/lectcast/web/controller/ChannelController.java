@@ -20,7 +20,6 @@ import jp.ac.hosei.media.lectcast.web.form.ItemForm;
 import jp.ac.hosei.media.lectcast.web.repository.ChannelRepository;
 import jp.ac.hosei.media.lectcast.web.repository.FeedRepository;
 import jp.ac.hosei.media.lectcast.web.repository.ItemRepository;
-import jp.ac.hosei.media.lectcast.web.service.AmazonMediaConvertService;
 import jp.ac.hosei.media.lectcast.web.service.AmazonS3Service;
 import jp.ac.hosei.media.lectcast.web.service.LocalConvertService;
 import net.bramp.ffmpeg.probe.FFmpegFormat;
@@ -59,9 +58,6 @@ public class ChannelController {
 
   @Autowired
   private AmazonS3Service amazonS3Service;
-
-  @Autowired
-  private AmazonMediaConvertService amazonMediaConvertService;
 
   @Autowired
   private LocalConvertService localConvertService;
