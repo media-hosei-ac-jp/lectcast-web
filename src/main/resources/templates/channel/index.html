@@ -142,7 +142,7 @@
           <h5 class="mb-0" th:text="#{lectcast.item.upload}">Upload an Item</h5>
         </div>
         <div class="col-12 col-sm-8 col-lg-9">
-          <form action="#" enctype="multipart/form-data" method="post"
+          <form id="uploadForm" action="#" enctype="multipart/form-data" method="post"
                 th:action="@{/channels/item}">
             <div class="mb-3">
               <label for="itemFormTitle" th:text="#{lectcast.item.title.label}">Title</label>
@@ -164,7 +164,7 @@
                        required type="file">
               </div>
             </div>
-            <button class="btn btn-primary btn-block" th:text="#{button.submit}" type="submit">
+            <button class="btn btn-primary btn-block" id="itemFormUploadButton" th:text="#{button.submit}" type="submit">
               Upload
             </button>
           </form>
@@ -189,6 +189,7 @@
   const message_delete_confirm = /*[[#{lectcast.item.delete.confirm}]]*/ 'Confirm';
   const message_delete_cancelled = /*[[#{lectcast.item.delete.cancelled}]]*/ 'Cancelled';
   const message_delete_failed = /*[[#{lectcast.item.delete.failed}]]*/ 'Failed';
+  const message_uploading = /*[[#{lectcast.item.upload.message}]]*/ 'Uploading...';
   /*]]>*/
 
   $('article a.delete-item').click(function (event) {
@@ -210,6 +211,12 @@
           }
       )
     }
+  });
+
+  $('#itemFormUploadButton').click(function (event) {
+    $(this).prop("disabled", true);
+    $('#uploadForm').submit();
+    $(this).html('<span class="spinner-border" role="status" aria-hidden="true"></span> ' + message_uploading);
   });
 </script>
 </body>
