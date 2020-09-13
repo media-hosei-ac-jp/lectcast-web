@@ -32,6 +32,7 @@ import net.bramp.ffmpeg.probe.FFmpegFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -290,7 +291,7 @@ public class ChannelController {
 
   @GetMapping("item/{id}")
   @ResponseBody
-  public ResponseEntity<InputStreamResource> getItem(@PathVariable final String id,
+  public ResponseEntity<ByteArrayResource> getItem(@PathVariable final String id,
       final HttpSession httpSession, final UriComponentsBuilder builder, final Model model) {
     final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
     if (null == lectcastSession) {
@@ -304,7 +305,16 @@ public class ChannelController {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    return amazonS3Service.getObject(item.getS3Key() + "/" + item.getS3Key() + ".m3u8", "hls");
+    final String itemKey = KEY_ORIGINAL_PREFIX + "/" + item.getChannel().getId() + "/" + item.getS3Key() + "/" + item.getFilename();
+
+    final byte[] data = amazonS3Service.downloadFile(itemKey);
+    final ByteArrayResource resource = new ByteArrayResource(data);
+    return ResponseEntity
+        .ok()
+        .contentLength(data.length)
+        .header("Content-type", "application/octet-stream")
+        .header("Content-disposition", "attachment; filename=\"" + item.getFilename() + "\"")
+        .body(resource);
   }
 
   @DeleteMapping("item/{id}")
@@ -339,17 +349,6 @@ public class ChannelController {
 
     final URI location = builder.path("/channels").build().toUri();
     return "redirect:" + location.toString();
-  }
-
-  @GetMapping("item/download")
-  @ResponseBody
-  public ResponseEntity<InputStreamResource> serveFile(@RequestParam("key") final String key,
-      final HttpSession httpSession) {
-    final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
-    if (null == lectcastSession || null == lectcastSession.getChannel()) {
-      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-    }
-    return amazonS3Service.getObject(key, KEY_PREFIX);
   }
 
   @ModelAttribute(name = "channelForm")
