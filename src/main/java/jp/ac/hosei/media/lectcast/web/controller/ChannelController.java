@@ -8,8 +8,6 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import javax.servlet.http.HttpSession;
 import jp.ac.hosei.media.lectcast.web.component.LectcastSession;
 import jp.ac.hosei.media.lectcast.web.data.Channel;
@@ -177,7 +175,6 @@ public class ChannelController {
     final String key = amazonS3Service.generateKey();
 
     File originalFile = null;
-    File convertedFile = null;
     try {
       // Create a temporary file
       final Path tmpPath = Files.createTempFile(Paths.get("/tmp"), "lectcast_", "." + extension);
@@ -195,18 +192,10 @@ public class ChannelController {
       final double duration = fileFormat.duration;
       final String formatLongName = fileFormat.format_long_name;
 
-      CompletableFuture<String> convert = null;
-
       switch (formatLongName) {
-        case "ASF (Advanced / Active Streaming Format)":
-          // wmapro, wmav2: convert needs
-          // Local convert
-          convert = localConvertService.convert(tmpPath.toString());
-          break;
-        case "MP2/3 (MPEG audio layer 2/3)":
-          // mp3
-        case "QuickTime / MOV":
-          // m4a
+        case "ASF (Advanced / Active Streaming Format)":  // wmapro, wmav2: convert needs
+        case "QuickTime / MOV":                           // m4a
+        case "MP2/3 (MPEG audio layer 2/3)":              // mp3
           break;
         default:
           model.addAttribute("error", "Unsupported FileFormat");
@@ -224,25 +213,6 @@ public class ChannelController {
           itemForm.getAudioFile().getSize(),
           600);
 
-      if (null != convert) {
-        // Wait an async process
-        CompletableFuture.allOf(convert).join();
-
-        final String convertedFilePathString = convert.get();
-
-        convertedFile = new File(convertedFilePathString);
-
-        // Put a converted audio object
-        amazonS3Service.putObject(
-            convertedFile,
-            key,
-            fileName + ".mp3",
-            KEY_ORIGINAL_PREFIX,
-            "audio/mpeg",
-            convertedFile.length(),
-            600);
-      }
-
       // Persist an item object
       item.setChannel(lectcastSession.getChannel());
       item.setS3Key(key);
@@ -251,15 +221,12 @@ public class ChannelController {
       item.setDescription(itemForm.getDescription());
       item.setDuration((int) duration);
       itemRepository.save(item);
-    } catch (IOException | InterruptedException | ExecutionException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     } finally {
       // Delete files if exist
       if (originalFile != null && originalFile.exists()) {
         originalFile.delete();
-      }
-      if (convertedFile != null && convertedFile.exists()) {
-        convertedFile.delete();
       }
     }
 
