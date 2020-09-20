@@ -48,6 +48,7 @@
                th:src="${@amazonCloudFrontService.getSignedUrl(item.s3Key, 'audio')}">
           <p th:text="#{lectcast.error.audio_tag_is_not_supported}"></p>
         </audio>
+        <div class="alert alert-info" role="alert" style="display: none;" th:text="#{lectcast.item.convert.message}">Converting...</div>
       </div>
     </article>
   </div>
@@ -191,7 +192,6 @@
   const message_delete_cancelled = /*[[#{lectcast.item.delete.cancelled}]]*/ 'Cancelled';
   const message_delete_failed = /*[[#{lectcast.item.delete.failed}]]*/ 'Failed';
   const message_uploading = /*[[#{lectcast.item.upload.message}]]*/ 'Uploading...';
-  const message_converting = /*[[#{lectcast.item.convert.message}]]*/ 'Converting...';
   /*]]>*/
 
   $('article a.delete-item').click(function (event) {
@@ -215,20 +215,28 @@
     }
   });
 
-  document.addEventListener('DOMContentLoaded', function() {
-    var audios = document.getElementsByTagName('audio');
-    for (var i = 0; i < audios.length; i++) {
-      audios[i].addEventListener('error', function (event) {
-        $(this).parent().html('<div class="alert alert-info" role="alert">' + message_converting + '</div>');
-      }, false);
-    }
-  });
-
   $('#itemFormUploadButton').click(function (event) {
     $(this).prop("disabled", true);
     $('#uploadForm').submit();
     $(this).html('<span class="spinner-border" role="status" aria-hidden="true"></span> '
         + message_uploading);
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var audios = document.getElementsByTagName('audio');
+    for (var i = 0; i < audios.length; i++) {
+      audios[i].addEventListener('error', function (event) {
+        event.target.style.display = 'none';
+        event.target.nextElementSibling.style.removeProperty('display');
+        setTimeout( function retry(){
+          event.target.load();
+        }, 5000);
+      }, false);
+      audios[i].addEventListener('loadeddata', function (event) {
+        event.target.style.removeProperty('display');
+        event.target.nextElementSibling.style.display = 'none';
+      }, false);
+    }
   });
 </script>
 </body>
