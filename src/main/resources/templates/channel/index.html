@@ -48,17 +48,12 @@
                   th:text="${#dates.format(item.createdAt, 'yyyy/MM/dd HH:mm')}">
               yyyy/MM/dd HH:mm
             </time>
-            <span th:if="${isInstructor && item.isInfinity == 0}">
+            <span th:if="${item.isInfinity == 0}">
               ,
               <span th:text="#{lectcast.item.schedule.label}">Schedule</span>
               :
               <time th:datetime="${item.dateFrom}"
                     th:text="${#dates.format(item.dateFrom, 'yyyy/MM/dd HH:mm')}">
-                yyyy/MM/dd HH:mm
-              </time>
-              -
-              <time th:datetime="${item.dateTo}"
-                    th:text="${#dates.format(item.dateTo, 'yyyy/MM/dd HH:mm')}">
                 yyyy/MM/dd HH:mm
               </time>
             </span>
@@ -210,18 +205,6 @@
                   </div>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="itemFormDateTo" th:text="#{lectcast.item.date_to.label}">To</label>
-                <div class="input-group date" data-target-input="nearest" id="datetopicker">
-                  <input class="form-control datetimepicker-input" data-target="#datetopicker"
-                         disabled
-                         id="itemFormDateTo" name="dateTo" type="text">
-                  <div class="input-group-append" data-target="#datetopicker"
-                       data-toggle="datetimepicker">
-                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                  </div>
-                </div>
-              </div>
             </div>
             <button class="btn btn-primary btn-block" id="itemFormUploadButton"
                     th:text="#{button.submit}" type="submit">
@@ -272,10 +255,8 @@
   $('#itemFormIsInfinity').click(function (event) {
     if (event.currentTarget.checked) {
       document.getElementById('itemFormDateFrom').disabled = true;
-      document.getElementById('itemFormDateTo').disabled = true;
     } else {
       document.getElementById('itemFormDateFrom').disabled = false;
-      document.getElementById('itemFormDateTo').disabled = false;
     }
   });
 

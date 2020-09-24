@@ -183,7 +183,7 @@ public class ChannelController {
     final Item item = new Item();
     final String key = amazonS3Service.generateKey();
 
-    final boolean isInfinity = (itemForm.getIsInfinity() != null);
+    final boolean isInfinity = (null != itemForm.getIsInfinity());
     if (isInfinity) {
       // No limit
       item.setIsInfinity(1);
@@ -191,10 +191,12 @@ public class ChannelController {
       // Limited
       item.setIsInfinity(0);
       item.setDateFrom(itemForm.getDateFrom());
-      final Calendar dateToCalendar = Calendar.getInstance();
-      dateToCalendar.setTime(itemForm.getDateTo());
-      dateToCalendar.add(Calendar.SECOND, 59);
-      item.setDateTo(dateToCalendar.getTime());
+      if (null != itemForm.getDateTo()) {
+        final Calendar dateToCalendar = Calendar.getInstance();
+        dateToCalendar.setTime(itemForm.getDateTo());
+        dateToCalendar.add(Calendar.SECOND, 59);
+        item.setDateTo(dateToCalendar.getTime());
+      }
     }
 
     File originalFile = null;
