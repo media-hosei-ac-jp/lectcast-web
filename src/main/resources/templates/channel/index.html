@@ -32,6 +32,7 @@
   <div class="container" th:if="${! #lists.isEmpty(itemList)}">
     <article class="row justify-content-end my-3 py-2" th:each="item : ${itemList}">
       <div class="col-12 col-md-6 col-xl-8">
+        <!--/*@thymesVar id="item" type="jp.ac.hosei.media.lectcast.web.data.Item"*/-->
         <h4 class="mb-2" th:styleappend="${item.isInfinity == 0 && (#dates.createNow() < item.dateFrom or #dates.createNow() > item.dateTo)}? 'background: #e2e3e5;'">
           <span th:text="${item.title}">Item Title</span>
           <small class="text-muted">
@@ -63,6 +64,7 @@
         </p>
       </div>
       <div class="col-12 col-md-6 col-xl-4 mt-2 mt-md-0 text-md-right">
+        <!--/*@thymesVar id="item" type="jp.ac.hosei.media.lectcast.web.data.Item"*/-->
         <audio controls src="#"
                th:src="${@amazonCloudFrontService.getSignedUrl(item.s3Key, 'audio')}">
           <p th:text="#{lectcast.error.audio_tag_is_not_supported}"></p>
@@ -302,8 +304,8 @@
   });
 
   document.addEventListener('DOMContentLoaded', function () {
-    var audios = document.getElementsByTagName('audio');
-    for (var i = 0; i < audios.length; i++) {
+    const audios = document.getElementsByTagName('audio');
+    for (let i = 0; i < audios.length; i++) {
       audios[i].addEventListener('error', function (event) {
         event.target.style.display = 'none';
         event.target.nextElementSibling.style.removeProperty('display');
