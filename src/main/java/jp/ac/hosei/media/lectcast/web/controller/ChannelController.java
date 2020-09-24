@@ -8,6 +8,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Calendar;
 import javax.servlet.http.HttpSession;
 import jp.ac.hosei.media.lectcast.web.component.LectcastSession;
 import jp.ac.hosei.media.lectcast.web.data.Channel;
@@ -98,6 +99,14 @@ public class ChannelController {
     model.addAttribute("channel", channel);
     lectcastSession.setChannel(channel);
 
+    Iterable<Item> itemList;
+    if (isInstructor) {
+      itemList = itemRepository.findAllByChannelOrderByCreatedAtDesc(channel);
+    } else {
+      itemList = itemRepository.findActiveByChannelOrderByCreatedAtDesc(channel);
+    }
+    model.addAttribute("itemList", itemList);
+
     // Set a feed
     final String ltiUserId = lectcastSession.getUserId();
     Feed feed = feedRepository.findByChannelAndLtiUserId(channel, ltiUserId);
@@ -173,6 +182,20 @@ public class ChannelController {
 
     final Item item = new Item();
     final String key = amazonS3Service.generateKey();
+
+    final boolean isInfinity = (itemForm.getIsInfinity() != null);
+    if (isInfinity) {
+      // No limit
+      item.setIsInfinity(1);
+    } else {
+      // Limited
+      item.setIsInfinity(0);
+      item.setDateFrom(itemForm.getDateFrom());
+      final Calendar dateToCalendar = Calendar.getInstance();
+      dateToCalendar.setTime(itemForm.getDateTo());
+      dateToCalendar.add(Calendar.SECOND, 59);
+      item.setDateTo(dateToCalendar.getTime());
+    }
 
     File originalFile = null;
     try {

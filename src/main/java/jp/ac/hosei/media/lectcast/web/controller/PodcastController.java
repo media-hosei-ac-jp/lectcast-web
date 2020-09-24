@@ -7,7 +7,9 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import jp.ac.hosei.media.lectcast.web.data.Feed;
+import jp.ac.hosei.media.lectcast.web.data.Item;
 import jp.ac.hosei.media.lectcast.web.repository.FeedRepository;
+import jp.ac.hosei.media.lectcast.web.repository.ItemRepository;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 import org.slf4j.Logger;
@@ -39,12 +41,17 @@ public class PodcastController {
   @Autowired
   private FeedRepository feedRepository;
 
+  @Autowired
+  private ItemRepository itemRepository;
+
   @GetMapping("/feed.xml")
   public void individualFeed(@RequestParam("feed") final String feedId,
       final HttpServletResponse response) throws IOException {
     final Feed feed = feedRepository.findById(feedId);
 
     if (null != feed) {
+      final Iterable<Item> itemList = itemRepository.findActiveByChannelOrderByCreatedAtDesc(feed.getChannel());
+
       SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
       resolver.setApplicationContext(new AnnotationConfigApplicationContext());
       resolver.setPrefix("classpath:/xml/");
@@ -59,6 +66,7 @@ public class PodcastController {
       ctx.setVariable(ThymeleafEvaluationContext.THYMELEAF_EVALUATION_CONTEXT_CONTEXT_VARIABLE_NAME,
           new ThymeleafEvaluationContext(applicationContext, null));  // for using beans
       ctx.setVariable("channel", feed.getChannel());
+      ctx.setVariable("itemList", itemList);
       ctx.setLocale(Locale.ENGLISH);  // Set locale for pubDate
       String xml = engine.process("feed", ctx);
 

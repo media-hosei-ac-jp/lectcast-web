@@ -5,7 +5,7 @@
         <title th:text="${channel.title}">Channel Title</title>
         <link>https://www.example.com/podcasts/</link>
 
-        <item th:each="item : ${channel.itemList}">
+        <item th:each="item : ${itemList}">
             <title th:text="${item.title}">Item Title</title>
             <description th:if="${item.description}" th:text="${item.description}">Description (option)</description>
             <pubDate th:text="${#dates.format(item.createdAt, 'EEE, dd MMM yyyy HH:mm:ss Z')}">EEE, dd MMM yyyy HH:mm:ss Z</pubDate>

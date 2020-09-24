@@ -1,5 +1,6 @@
 package jp.ac.hosei.media.lectcast.web.form;
 
+import java.util.Date;
 import javax.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,6 +13,12 @@ public class ItemForm {
   private String title;
 
   private String description;
+
+  private String isInfinity;
+
+  private Date dateFrom;
+
+  private Date dateTo;
 
   public MultipartFile getAudioFile() {
     return audioFile;
@@ -37,4 +44,27 @@ public class ItemForm {
     this.description = description;
   }
 
+  public String getIsInfinity() {
+    return isInfinity;
+  }
+
+  public void setIsInfinity(String isInfinity) {
+    this.isInfinity = isInfinity;
+  }
+
+  public Date getDateFrom() {
+    return dateFrom;
+  }
+
+  public void setDateFrom(Date dateFrom) {
+    this.dateFrom = dateFrom;
+  }
+
+  public Date getDateTo() {
+    return dateTo;
+  }
+
+  public void setDateTo(Date dateTo) {
+    this.dateTo = dateTo;
+  }
 }

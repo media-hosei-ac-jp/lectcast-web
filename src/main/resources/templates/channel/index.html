@@ -10,6 +10,10 @@
         href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
         rel="stylesheet">
+  <link crossorigin="anonymous"
+        href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css"
+        integrity="sha512-PMjWzHVtwxdq7m7GIxBot5vdxUY+5aKP9wpKtvnNBZrVv1srI8tU6xvFMzG8crLNcMj/8Xl/WWmo/oAP/40p1g=="
+        rel="stylesheet"/>
   <link href="../../static/css/lectcast.css" rel="stylesheet" th:href="@{/css/lectcast.css}"
         type="text/css">
   <title th:text="|${channel.title} - #{lectcast.app_name}|"></title>
@@ -25,10 +29,10 @@
 </section>
 
 <main class="py-3">
-  <div class="container" th:if="${! #lists.isEmpty(channel.itemList)}">
-    <article class="row justify-content-end my-3 py-2" th:each="item : ${channel.itemList}">
+  <div class="container" th:if="${! #lists.isEmpty(itemList)}">
+    <article class="row justify-content-end my-3 py-2" th:each="item : ${itemList}">
       <div class="col-12 col-md-6 col-xl-8">
-        <h4 class="mb-2">
+        <h4 class="mb-2" th:styleappend="${item.isInfinity == 0 && (#dates.createNow() < item.dateFrom or #dates.createNow() > item.dateTo)}? 'background: #e2e3e5;'">
           <span th:text="${item.title}">Item Title</span>
           <small class="text-muted">
             (
@@ -42,17 +46,34 @@
               class="fas fa-trash"></i></a>
         </h4>
         <p class="my-1 pl-4" hosei:brtext="${item.description}">Item Description</p>
+        <p class="my-1 pl-4" th:if="${isInstructor && item.isInfinity == 0}">
+          <small class="text-muted">
+            <span th:text="#{lectcast.item.schedule.label}">Schedule</span>
+            :
+            <time th:datetime="${item.dateFrom}"
+                  th:text="${#dates.format(item.dateFrom, 'yyyy/MM/dd HH:mm')}">
+              yyyy/MM/dd HH:mm
+            </time>
+            -
+            <time th:datetime="${item.dateTo}"
+                  th:text="${#dates.format(item.dateTo, 'yyyy/MM/dd HH:mm')}">
+              yyyy/MM/dd HH:mm
+            </time>
+          </small>
+        </p>
       </div>
       <div class="col-12 col-md-6 col-xl-4 mt-2 mt-md-0 text-md-right">
         <audio controls src="#"
                th:src="${@amazonCloudFrontService.getSignedUrl(item.s3Key, 'audio')}">
           <p th:text="#{lectcast.error.audio_tag_is_not_supported}"></p>
         </audio>
-        <div class="alert alert-info" role="alert" style="display: none;" th:text="#{lectcast.item.convert.message}">Converting...</div>
+        <div class="alert alert-info" role="alert" style="display: none;"
+             th:text="#{lectcast.item.convert.message}">Converting...
+        </div>
       </div>
     </article>
   </div>
-  <div class="container" th:if="${#lists.isEmpty(channel.itemList)}">
+  <div class="container" th:if="${#lists.isEmpty(itemList)}">
     <div class="alert alert-danger" role="alert" th:text="#{lectcast.error.no_items_found}">
       No items found.
     </div>
@@ -143,7 +164,7 @@
           <h5 class="mb-0" th:text="#{lectcast.item.upload}">Upload an Item</h5>
         </div>
         <div class="col-12 col-sm-8 col-lg-9">
-          <form id="uploadForm" action="#" enctype="multipart/form-data" method="post"
+          <form action="#" enctype="multipart/form-data" id="uploadForm" method="post"
                 th:action="@{/channels/item}">
             <div class="mb-3">
               <label for="itemFormTitle" th:text="#{lectcast.item.title.label}">Title</label>
@@ -163,6 +184,37 @@
                   File</label>
                 <input class="form-control-file" id="itemFormAudioFile" name="audioFile"
                        required type="file">
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="form-group form-check">
+                <input checked class="form-check-input" id="itemFormIsInfinity"
+                       name="isInfinity" type="checkbox" value="1">
+                <label class="form-check-label" for="itemFormIsInfinity"
+                       th:text="#{lectcast.item.is_infinity.label}">Unlimited</label>
+              </div>
+              <div class="form-group">
+                <label for="itemFormDateFrom"
+                       th:text="#{lectcast.item.date_from.label}">From</label>
+                <div class="input-group date" data-target-input="nearest" id="datefrompicker">
+                  <input class="form-control datetimepicker-input" data-target="#datefrompicker" disabled
+                         id="itemFormDateFrom" name="dateFrom" type="text">
+                  <div class="input-group-append" data-target="#datefrompicker"
+                       data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="itemFormDateTo" th:text="#{lectcast.item.date_to.label}">To</label>
+                <div class="input-group date" data-target-input="nearest" id="datetopicker">
+                  <input class="form-control datetimepicker-input" data-target="#datetopicker" disabled
+                         id="itemFormDateTo" name="dateTo" type="text">
+                  <div class="input-group-append" data-target="#datetopicker"
+                       data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                  </div>
+                </div>
               </div>
             </div>
             <button class="btn btn-primary btn-block" id="itemFormUploadButton"
@@ -185,6 +237,12 @@
 <script crossorigin="anonymous"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha512-Izh34nqeeR7/nwthfeE0SI3c8uhFSnqxV0sI9TvTcXiFJkMd6fB644O64BRq2P/LA/+7eRvCw4GmLsXksyTHBg=="
+        src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.0/moment.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha512-2JBCbWoMJPH+Uj7Wq5OLub8E5edWHlTM4ar/YJkZh3plwB2INhhOC3eDoqHm1Za/ZOSksrLlURLoyXVdfQXqwg=="
+        src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js"></script>
 <script crossorigin="anonymous" src="https://kit.fontawesome.com/933e54be06.js"></script>
 <script th:inline="javascript" type="application/javascript">
   /*<![CDATA[*/
@@ -193,6 +251,27 @@
   const message_delete_failed = /*[[#{lectcast.item.delete.failed}]]*/ 'Failed';
   const message_uploading = /*[[#{lectcast.item.upload.message}]]*/ 'Uploading...';
   /*]]>*/
+
+  $(function () {
+    $('#datefrompicker').datetimepicker({
+      locale: 'ja',
+      format: 'YYYY/MM/DD HH:mm'
+    });
+    $('#datetopicker').datetimepicker({
+      locale: 'ja',
+      format: 'YYYY/MM/DD HH:mm'
+    });
+  });
+
+  $('#itemFormIsInfinity').click(function (event) {
+    if (event.currentTarget.checked) {
+      document.getElementById('itemFormDateFrom').disabled = true;
+      document.getElementById('itemFormDateTo').disabled = true;
+    } else {
+      document.getElementById('itemFormDateFrom').disabled = false;
+      document.getElementById('itemFormDateTo').disabled = false;
+    }
+  });
 
   $('article a.delete-item').click(function (event) {
     const itemId = event.currentTarget.dataset['value'];
@@ -222,13 +301,13 @@
         + message_uploading);
   });
 
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     var audios = document.getElementsByTagName('audio');
     for (var i = 0; i < audios.length; i++) {
       audios[i].addEventListener('error', function (event) {
         event.target.style.display = 'none';
         event.target.nextElementSibling.style.removeProperty('display');
-        setTimeout( function retry(){
+        setTimeout(function retry() {
           event.target.load();
         }, 5000);
       }, false);

@@ -1,6 +1,8 @@
 package jp.ac.hosei.media.lectcast.web.data;
 
 import java.io.Serializable;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,6 +45,14 @@ public class Item implements Serializable {
   private int duration;
 
   private int explicit;
+
+  @NotNull
+  private Date dateFrom;
+
+  @NotNull
+  private Date dateTo;
+
+  private int isInfinity;
 
   private int isConverted;
 
@@ -118,6 +128,30 @@ public class Item implements Serializable {
     this.explicit = explicit;
   }
 
+  public Date getDateFrom() {
+    return dateFrom;
+  }
+
+  public void setDateFrom(Date dateFrom) {
+    this.dateFrom = dateFrom;
+  }
+
+  public Date getDateTo() {
+    return dateTo;
+  }
+
+  public void setDateTo(Date dateTo) {
+    this.dateTo = dateTo;
+  }
+
+  public int getIsInfinity() {
+    return isInfinity;
+  }
+
+  public void setIsInfinity(int isInfinity) {
+    this.isInfinity = isInfinity;
+  }
+
   public int getIsConverted() {
     return isConverted;
   }
@@ -154,6 +188,15 @@ public class Item implements Serializable {
   public void onPrePersist() {
     setCreatedAt(new Date());
     setUpdatedAt(new Date());
+
+    if (this.dateFrom == null) {
+      final ZonedDateTime fromDateTime = ZonedDateTime.of(1,1,1,0,0,0, 0, ZoneId.of("UTC"));
+      setDateFrom(Date.from(fromDateTime.toInstant()));
+    }
+    if (this.dateTo == null) {
+      final ZonedDateTime toDateTime = ZonedDateTime.of(9999,12,31,23,59,59, 0, ZoneId.of("UTC"));
+      setDateTo(Date.from(toDateTime.toInstant()));
+    }
   }
 
   @PreUpdate
