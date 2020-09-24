@@ -33,33 +33,35 @@
     <article class="row justify-content-end my-3 py-2" th:each="item : ${itemList}">
       <div class="col-12 col-md-6 col-xl-8">
         <!--/*@thymesVar id="item" type="jp.ac.hosei.media.lectcast.web.data.Item"*/-->
-        <h4 class="mb-2" th:styleappend="${item.isInfinity == 0 && (#dates.createNow() < item.dateFrom or #dates.createNow() > item.dateTo)}? 'background: #e2e3e5;'">
+        <h4 class="mb-2"
+            th:styleappend="${item.isInfinity == 0 && (#dates.createNow() < item.dateFrom or #dates.createNow() > item.dateTo)}? 'background: #e2e3e5;'">
           <span th:text="${item.title}">Item Title</span>
+          <a class="delete-item" href="#" th:data-value="${item.id}" th:if="${isInstructor}"><i
+              class="fas fa-trash"></i></a>
+        </h4>
+        <p class="my-1" hosei:brtext="${item.description}">Item Description</p>
+        <p class="my-1">
           <small class="text-muted">
-            (
+            <span th:text="#{lectcast.item.created_at.label}">Uploaded at</span>
+            :
             <time th:datetime="${item.createdAt}"
                   th:text="${#dates.format(item.createdAt, 'yyyy/MM/dd HH:mm')}">
               yyyy/MM/dd HH:mm
             </time>
-            )
-          </small>
-          <a class="delete-item" href="#" th:data-value="${item.id}" th:if="${isInstructor}"><i
-              class="fas fa-trash"></i></a>
-        </h4>
-        <p class="my-1 pl-4" hosei:brtext="${item.description}">Item Description</p>
-        <p class="my-1 pl-4" th:if="${isInstructor && item.isInfinity == 0}">
-          <small class="text-muted">
-            <span th:text="#{lectcast.item.schedule.label}">Schedule</span>
-            :
-            <time th:datetime="${item.dateFrom}"
-                  th:text="${#dates.format(item.dateFrom, 'yyyy/MM/dd HH:mm')}">
-              yyyy/MM/dd HH:mm
-            </time>
-            -
-            <time th:datetime="${item.dateTo}"
-                  th:text="${#dates.format(item.dateTo, 'yyyy/MM/dd HH:mm')}">
-              yyyy/MM/dd HH:mm
-            </time>
+            <span th:if="${isInstructor && item.isInfinity == 0}">
+              ,
+              <span th:text="#{lectcast.item.schedule.label}">Schedule</span>
+              :
+              <time th:datetime="${item.dateFrom}"
+                    th:text="${#dates.format(item.dateFrom, 'yyyy/MM/dd HH:mm')}">
+                yyyy/MM/dd HH:mm
+              </time>
+              -
+              <time th:datetime="${item.dateTo}"
+                    th:text="${#dates.format(item.dateTo, 'yyyy/MM/dd HH:mm')}">
+                yyyy/MM/dd HH:mm
+              </time>
+            </span>
           </small>
         </p>
       </div>
@@ -199,7 +201,8 @@
                 <label for="itemFormDateFrom"
                        th:text="#{lectcast.item.date_from.label}">From</label>
                 <div class="input-group date" data-target-input="nearest" id="datefrompicker">
-                  <input class="form-control datetimepicker-input" data-target="#datefrompicker" disabled
+                  <input class="form-control datetimepicker-input" data-target="#datefrompicker"
+                         disabled
                          id="itemFormDateFrom" name="dateFrom" type="text">
                   <div class="input-group-append" data-target="#datefrompicker"
                        data-toggle="datetimepicker">
@@ -210,7 +213,8 @@
               <div class="form-group">
                 <label for="itemFormDateTo" th:text="#{lectcast.item.date_to.label}">To</label>
                 <div class="input-group date" data-target-input="nearest" id="datetopicker">
-                  <input class="form-control datetimepicker-input" data-target="#datetopicker" disabled
+                  <input class="form-control datetimepicker-input" data-target="#datetopicker"
+                         disabled
                          id="itemFormDateTo" name="dateTo" type="text">
                   <div class="input-group-append" data-target="#datetopicker"
                        data-toggle="datetimepicker">

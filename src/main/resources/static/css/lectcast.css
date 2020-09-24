@@ -44,3 +44,15 @@ h4:before {
 div.card-header i {
     font-size: 1.2rem;
 }
+
+article > div > h4 > a {
+    float: right;
+}
+
+article > div > p {
+    padding-left: 45px;
+}
+
+article > div.text-md-right {
+    padding-left: 45px;
+}
