@@ -2,6 +2,8 @@ package jp.ac.hosei.media.lectcast.web.form;
 
 import java.util.Date;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.springframework.web.multipart.MultipartFile;
 
 public class ItemForm {
@@ -10,6 +12,7 @@ public class ItemForm {
   private MultipartFile audioFile;
 
   @NotNull
+  @Size(min=1,max=255)
   private String title;
 
   private String description;
