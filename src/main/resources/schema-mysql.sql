@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `channel` (
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `key_context_id_resource_link_id` (`lti_context_id` ASC, `lti_resource_link_id` ASC) VISIBLE)
+  UNIQUE INDEX `key_context_id_resource_link_id` (`lti_context_id` ASC, `lti_resource_link_id` ASC) )
 ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `item` (
@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS `item` (
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_items_channels_idx` (`channel_id` ASC) VISIBLE,
-  UNIQUE INDEX `key_s3_key` (`s3_key` ASC) VISIBLE,
+  INDEX `fk_items_channels_idx` (`channel_id` ASC) ,
+  UNIQUE INDEX `key_s3_key` (`s3_key` ASC) ,
   CONSTRAINT `fk_items_channels`
     FOREIGN KEY (`channel_id`)
     REFERENCES `channel` (`id`)
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `feed` (
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_feed_channel_idx` (`channel_id` ASC) VISIBLE,
+  INDEX `fk_feed_channel_idx` (`channel_id` ASC) ,
   CONSTRAINT `fk_feed_channel`
     FOREIGN KEY (`channel_id`)
     REFERENCES `channel` (`id`)
