@@ -30,7 +30,7 @@
 
 <main class="py-3">
     <div class="container">
-        <div class="alert alert-info" role="alert" >
+        <div class="alert alert-info" role="alert">
             <a class="text-info" th:text="#{lectcast.info.service_end_message}" href="https://www.hosei.ac.jp/media/info/article-20210715112537/"> Service End Message</a>
         </div>
     </div>
@@ -163,17 +163,20 @@
     <div class="container">
         <div th:if="${isInstructor}">
             <h2 class="mb-3" th:text="#{lectcast.management}">Management Tools</h2>
+
             <div class="row">
                 <div class="col-12 col-sm-4 col-lg-3">
                     <h5 class="mb-0" th:text="#{lectcast.item.upload}">Upload an Item</h5>
                 </div>
                 <div class="col-12 col-sm-8 col-lg-9">
                     <form action="#" enctype="multipart/form-data" id="uploadForm" method="post"
-                          th:action="@{/channels/item}">
+                          th:action="@{/channels/item}" th:object="${itemForm}">
+
                         <div class="mb-3">
                             <label for="itemFormTitle" th:text="#{lectcast.item.title.label}">Title</label>
                             <input class="form-control" id="itemFormTitle" name="title" required
-                                   th:placeholder="#{lectcast.item.title.placeholder}" type="text">
+                                   th:placeholder="#{lectcast.item.title.placeholder}" type="text" th:field="*{title}">
+                            <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" >Title Error</p>
 
 
                         </div>
@@ -182,15 +185,17 @@
                                    th:text="#{lectcast.item.description.label}">Description</label>
                             <textarea class="form-control" id="itemFormDescription" name="description"
                                       rows="3"
-                                      th:placeholder="#{lectcast.item.description.placeholder}"></textarea>
+                                      th:placeholder="#{lectcast.item.description.placeholder}" th:field="*{description}"></textarea>
                         </div>
+                        <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</span>
                         <div class="mb-3">
                             <div class="form-group">
                                 <label for="itemFormAudioFile" th:text="#{lectcast.item.audio_file.label}">Audio
                                     File</label>
                                 <input class="form-control-file" id="itemFormAudioFile" name="audioFile"
-                                       required type="file">
+                                       required type="file" th:field="*{audioFile}">
                             </div>
+                            <span th:if="${#fields.hasErrors('audioFile')}" th:errors="*{audioFile}">AudioFile Error</span>
                         </div>
                         <div class="mb-3">
                             <div class="form-group form-check">
