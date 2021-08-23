@@ -31,7 +31,7 @@
 <main class="py-3">
     <div class="container">
         <div class="alert alert-info" role="alert">
-            <a class="text-info" th:text="#{lectcast.info.service_end_message}" href="https://www.hosei.ac.jp/media/info/article-20210715112537/"> Service End Message</a>
+            <a class="text-info" th:text="#{lectcast.info.service_end_message}" rel="noopener" target="_blank"  href="https://www.hosei.ac.jp/media/info/article-20210715112537/"> Service End Message</a>
         </div>
     </div>
     <div class="container" th:if="${! #lists.isEmpty(itemList)}">
@@ -175,27 +175,29 @@
                         <div class="mb-3">
                             <label for="itemFormTitle" th:text="#{lectcast.item.title.label}">Title</label>
                             <input class="form-control" id="itemFormTitle" name="title" th:required="required"
-                                   th:placeholder="#{lectcast.item.title.placeholder}" type="text" th:field="*{title}">
-                            <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" >Title Error</p>
+                                   th:placeholder="#{lectcast.item.title.placeholder}" type="text" th:field="*{title}" th:errorclass="is-invalid">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}" >Title Error</div>
 
 
                         </div>
                         <div class="mb-3">
                             <label for="itemFormDescription"
-                                   th:text="#{lectcast.item.description.label}">Description</label>
+                                   th:text="#{lectcast.item.description.label}" >Description</label>
                             <textarea class="form-control" id="itemFormDescription" name="description"
                                       rows="3"
-                                      th:placeholder="#{lectcast.item.description.placeholder}" th:field="*{description}"></textarea>
+                                      th:placeholder="#{lectcast.item.description.placeholder}" th:field="*{description}" th:errorclass="is-invalid"></textarea>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</div>
                         </div>
-                        <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</span>
+
                         <div class="mb-3">
                             <div class="form-group">
                                 <label for="itemFormAudioFile" th:text="#{lectcast.item.audio_file.label}">Audio
                                     File</label>
                                 <input class="form-control-file" id="itemFormAudioFile" name="audioFile"
-                                       th:required="required" type="file" th:field="*{audioFile}">
+                                       th:required="required" type="file" th:field="*{audioFile}" th:errorclass="is-invalid">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('audioFile')}" th:errors="*{audioFile}" >AudioFile Error</div>
                             </div>
-                            <span th:if="${#fields.hasErrors('audioFile')}" th:errors="*{audioFile}" >AudioFile Error</span>
+
                         </div>
                         <div class="mb-3">
                             <div class="form-group form-check">
@@ -210,13 +212,14 @@
                                 <div class="input-group date" data-target-input="nearest" id="datefrompicker">
                                     <input class="form-control datetimepicker-input" data-target="#datefrompicker"
                                            disabled
-                                           id="itemFormDateFrom" name="dateFrom" type="text">
+                                           id="itemFormDateFrom" name="dateFrom" type="text" th:errorclass="is-invalid">
                                     <div class="input-group-append" data-target="#datefrompicker"
                                          data-toggle="datetimepicker">
                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                     </div>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('dateFrom')}" th:errors="*{dateFrom}">dateFrom Error</div>
                                 </div>
-                                <span th:if="${#fields.hasErrors('dateFrom')}" th:errors="*{dateFrom}">dateFrom Error</span>
+
                             </div>
                         </div>
                         <button class="btn btn-primary btn-block" id="itemFormUploadButton"

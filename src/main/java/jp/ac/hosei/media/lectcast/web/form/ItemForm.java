@@ -3,10 +3,14 @@ package jp.ac.hosei.media.lectcast.web.form;
 import java.util.Date;
 import javax.validation.constraints.*;
 
+import jp.ac.hosei.media.lectcast.web.validator.AudioType;
+import jp.ac.hosei.media.lectcast.web.validator.FileRequired;
 import org.springframework.web.multipart.MultipartFile;
 
 public class ItemForm {
 
+  @AudioType
+  @FileRequired
   private MultipartFile audioFile;
 
   @Size(max=255)
