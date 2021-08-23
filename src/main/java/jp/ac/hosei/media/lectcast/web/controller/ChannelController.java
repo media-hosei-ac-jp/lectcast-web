@@ -172,7 +172,7 @@ public class ChannelController {
     }
 
     if (result.hasErrors()){
-      System.out.println(result.toString());
+      System.out.println(result);
       model.addAttribute("errors",result);
       return index(httpSession,model);
 

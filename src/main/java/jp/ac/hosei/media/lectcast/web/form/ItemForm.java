@@ -9,15 +9,17 @@ public class ItemForm {
 
   private MultipartFile audioFile;
 
-  @Size(min=1,max=255)
+  @Size(max=255)
+  @NotEmpty
   private String title;
 
-  @Max(2048)
+  @Size(max=4096)
   private String description;
 
   @NotNull
   private String isInfinity;
 
+  @Future
   private Date dateFrom;
 
   private Date dateTo;

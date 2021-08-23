@@ -174,7 +174,7 @@
 
                         <div class="mb-3">
                             <label for="itemFormTitle" th:text="#{lectcast.item.title.label}">Title</label>
-                            <input class="form-control" id="itemFormTitle" name="title" required
+                            <input class="form-control" id="itemFormTitle" name="title" th:required="required"
                                    th:placeholder="#{lectcast.item.title.placeholder}" type="text" th:field="*{title}">
                             <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" >Title Error</p>
 
@@ -193,9 +193,9 @@
                                 <label for="itemFormAudioFile" th:text="#{lectcast.item.audio_file.label}">Audio
                                     File</label>
                                 <input class="form-control-file" id="itemFormAudioFile" name="audioFile"
-                                       required type="file" th:field="*{audioFile}">
+                                       th:required="required" type="file" th:field="*{audioFile}">
                             </div>
-                            <span th:if="${#fields.hasErrors('audioFile')}" th:errors="*{audioFile}">AudioFile Error</span>
+                            <span th:if="${#fields.hasErrors('audioFile')}" th:errors="*{audioFile}" >AudioFile Error</span>
                         </div>
                         <div class="mb-3">
                             <div class="form-group form-check">
@@ -216,6 +216,7 @@
                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                     </div>
                                 </div>
+                                <span th:if="${#fields.hasErrors('dateFrom')}" th:errors="*{dateFrom}">dateFrom Error</span>
                             </div>
                         </div>
                         <button class="btn btn-primary btn-block" id="itemFormUploadButton"
