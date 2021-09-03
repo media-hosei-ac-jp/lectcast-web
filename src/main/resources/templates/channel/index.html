@@ -4,51 +4,56 @@
       xmlns:hosei="http://www.thymeleaf.org"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-  <link crossorigin="anonymous"
-        href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-        rel="stylesheet">
-  <link crossorigin="anonymous"
-        href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css"
-        integrity="sha512-PMjWzHVtwxdq7m7GIxBot5vdxUY+5aKP9wpKtvnNBZrVv1srI8tU6xvFMzG8crLNcMj/8Xl/WWmo/oAP/40p1g=="
-        rel="stylesheet"/>
-  <link href="../../static/css/lectcast.css" rel="stylesheet" th:href="@{/css/lectcast.css}"
-        type="text/css">
-  <title th:text="|${channel.title} - #{lectcast.app_name}|"></title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <link crossorigin="anonymous"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          rel="stylesheet">
+    <link crossorigin="anonymous"
+          href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css"
+          integrity="sha512-PMjWzHVtwxdq7m7GIxBot5vdxUY+5aKP9wpKtvnNBZrVv1srI8tU6xvFMzG8crLNcMj/8Xl/WWmo/oAP/40p1g=="
+          rel="stylesheet"/>
+    <link href="../../static/css/lectcast.css" rel="stylesheet" th:href="@{/css/lectcast.css}"
+          type="text/css">
+    <title th:text="|${channel.title} - #{lectcast.app_name}|"></title>
 </head>
 <body class="text-dark">
 <section class="my-3">
-  <div class="container">
-    <h1 class="jumbotron-heading" th:text="${channel.title}">Channel Title</h1>
-    <p class="lead text-muted" th:if="${channel.description}" th:text="${channel.description}">
-      Something short and
-      leading about the channel.</p>
-  </div>
+    <div class="container">
+        <h1 class="jumbotron-heading" th:text="${channel.title}">Channel Title</h1>
+        <p class="lead text-muted" th:if="${channel.description}" th:text="${channel.description}">
+            Something short and
+            leading about the channel.</p>
+    </div>
 </section>
 
 <main class="py-3">
-  <div class="container" th:if="${! #lists.isEmpty(itemList)}">
-    <article class="row justify-content-end my-3 py-2" th:each="item : ${itemList}">
-      <div class="col-12 col-md-6 col-xl-8">
-        <!--/*@thymesVar id="item" type="jp.ac.hosei.media.lectcast.web.data.Item"*/-->
-        <h4 class="mb-2"
-            th:styleappend="${item.isInfinity == 0 && (#dates.createNow() < item.dateFrom or #dates.createNow() > item.dateTo)}? 'background: #e2e3e5;'">
-          <span th:text="${item.title}">Item Title</span>
-          <a class="delete-item" href="#" th:data-value="${item.id}" th:if="${isInstructor}"><i
-              class="fas fa-trash"></i></a>
-        </h4>
-        <p class="my-1" hosei:brtext="${item.description}">Item Description</p>
-        <p class="my-1">
-          <small class="text-muted">
-            <span th:text="#{lectcast.item.created_at.label}">Uploaded at</span>
-            :
-            <time th:datetime="${item.createdAt}"
-                  th:text="${#dates.format(item.createdAt, 'yyyy/MM/dd HH:mm')}">
-              yyyy/MM/dd HH:mm
-            </time>
-            <span th:if="${item.isInfinity == 0}">
+    <div class="container">
+        <div class="alert alert-info" role="alert">
+            <a class="text-info" th:text="#{lectcast.info.service_end_message}" rel="noopener" target="_blank"  href="https://www.hosei.ac.jp/media/info/article-20210715112537/"> Service End Message</a>
+        </div>
+    </div>
+    <div class="container" th:if="${! #lists.isEmpty(itemList)}">
+        <article class="row justify-content-end my-3 py-2" th:each="item : ${itemList}">
+            <div class="col-12 col-md-6 col-xl-8">
+                <!--/*@thymesVar id="item" type="jp.ac.hosei.media.lectcast.web.data.Item"*/-->
+                <h4 class="mb-2"
+                    th:styleappend="${item.isInfinity == 0 && (#dates.createNow() < item.dateFrom or #dates.createNow() > item.dateTo)}? 'background: #e2e3e5;'">
+                    <span th:text="${item.title}">Item Title</span>
+                    <a class="delete-item" href="#" th:data-value="${item.id}" th:if="${isInstructor}"><i
+                            class="fas fa-trash"></i></a>
+                </h4>
+                <p class="my-1" hosei:brtext="${item.description}">Item Description</p>
+                <p class="my-1">
+                    <small class="text-muted">
+                        <span th:text="#{lectcast.item.created_at.label}">Uploaded at</span>
+                        :
+                        <time th:datetime="${item.createdAt}"
+                              th:text="${#dates.format(item.createdAt, 'yyyy/MM/dd HH:mm')}">
+                            yyyy/MM/dd HH:mm
+                        </time>
+                        <span th:if="${item.isInfinity == 0}">
               ,
               <span th:text="#{lectcast.item.schedule.label}">Schedule</span>
               :
@@ -57,164 +62,175 @@
                 yyyy/MM/dd HH:mm
               </time>
             </span>
-          </small>
-        </p>
-      </div>
-      <div class="col-12 col-md-6 col-xl-4 mt-2 mt-md-0 text-md-right">
-        <!--/*@thymesVar id="item" type="jp.ac.hosei.media.lectcast.web.data.Item"*/-->
-        <audio controls src="#"
-               th:src="${@amazonCloudFrontService.getSignedUrl(item.s3Key, 'audio')}">
-          <p th:text="#{lectcast.error.audio_tag_is_not_supported}"></p>
-        </audio>
-        <div class="alert alert-info" role="alert" style="display: none;"
-             th:text="#{lectcast.item.convert.message}">Converting...
-        </div>
-      </div>
-    </article>
-  </div>
-  <div class="container" th:if="${#lists.isEmpty(itemList)}">
-    <div class="alert alert-danger" role="alert" th:text="#{lectcast.error.no_items_found}">
-      No items found.
+                    </small>
+                </p>
+            </div>
+            <div class="col-12 col-md-6 col-xl-4 mt-2 mt-md-0 text-md-right">
+                <!--/*@thymesVar id="item" type="jp.ac.hosei.media.lectcast.web.data.Item"*/-->
+                <audio controls src="#"
+                       th:src="${@amazonCloudFrontService.getSignedUrl(item.s3Key, 'audio')}">
+                    <p th:text="#{lectcast.error.audio_tag_is_not_supported}"></p>
+                </audio>
+                <div class="alert alert-info" role="alert" style="display: none;"
+                     th:text="#{lectcast.item.convert.message}">Converting...
+                </div>
+            </div>
+        </article>
     </div>
-  </div>
-  <hr/>
-  <div class="container accordion" id="guideAccordion">
-    <h2 th:text="#{lectcast.help.label}">Help</h2>
-    <div class="card">
-      <div class="card-header" id="introductionHeader">
-        <h3 class="mb-0">
-          <i class="fas fa-fw fa-info-circle"></i>
-          <button aria-controls="introduction" aria-expanded="false" class="btn btn-link pl-0"
-                  data-target="#introduction"
-                  data-toggle="collapse" type="button">
-            <span th:text="#{lectcast.help.introduction.title}">Title</span>
-          </button>
-        </h3>
-      </div>
-      <div aria-labelledby="introductionHeader" class="collapse show" data-parent="#guideAccordion"
-           id="introduction">
-        <div class="card-body" th:text="#{lectcast.help.introduction.body}">
-          Body
+    <div class="container" th:if="${#lists.isEmpty(itemList)}">
+        <div class="alert alert-danger" role="alert" th:text="#{lectcast.error.no_items_found}">
+            No items found.
         </div>
-      </div>
     </div>
-    <div class="card">
-      <div class="card-header" id="iosHeader">
-        <h3 class="mb-0">
-          <i class="fab fa-fw fa-apple"></i>
-          <button aria-controls="iosGuide" aria-expanded="false" class="btn btn-link pl-0"
-                  data-target="#iosGuide"
-                  data-toggle="collapse" type="button">
-            <span th:text="#{lectcast.help.ios.title}">Title</span>
-          </button>
-        </h3>
-      </div>
-      <div aria-labelledby="iosHeader" class="collapse" data-parent="#guideAccordion" id="iosGuide"
-           th:with="feeduri=@{~/podcasts/feed.xml(feed=${feed.id})}, host=${#httpServletRequest.getServerName()}">
-        <div class="card-body" th:text="#{lectcast.help.ios.body}">
-          Body
+    <hr/>
+    <div class="container accordion" id="guideAccordion">
+        <h2 th:text="#{lectcast.help.label}">Help</h2>
+        <div class="card">
+            <div class="card-header" id="introductionHeader">
+                <h3 class="mb-0">
+                    <i class="fas fa-fw fa-info-circle"></i>
+                    <button aria-controls="introduction" aria-expanded="false" class="btn btn-link pl-0"
+                            data-target="#introduction"
+                            data-toggle="collapse" type="button">
+                        <span th:text="#{lectcast.help.introduction.title}">Title</span>
+                    </button>
+                </h3>
+            </div>
+            <div aria-labelledby="introductionHeader" class="collapse show" data-parent="#guideAccordion"
+                 id="introduction">
+                <div class="card-body" th:text="#{lectcast.help.introduction.body}">
+                    Body
+                </div>
+            </div>
         </div>
-        <img alt="QRCode"
-             src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-             th:src="@{/podcasts/qrcode.png(feed=${feed.id}, type='podcast')}"/>
-        <div class="form-group mx-3">
-          <label class="sr-only" for="iosFeedUrl" th:text="#{button.podcast_feed}">Feed</label>
-          <div class="input-group mb-2 mr-sm-2">
-            <input class="form-control" id="iosFeedUrl" th:value="|https://${host}${feeduri}|"
-                   type="text">
-          </div>
+        <div class="card">
+            <div class="card-header" id="iosHeader">
+                <h3 class="mb-0">
+                    <i class="fab fa-fw fa-apple"></i>
+                    <button aria-controls="iosGuide" aria-expanded="false" class="btn btn-link pl-0"
+                            data-target="#iosGuide"
+                            data-toggle="collapse" type="button">
+                        <span th:text="#{lectcast.help.ios.title}">Title</span>
+                    </button>
+                </h3>
+            </div>
+            <div aria-labelledby="iosHeader" class="collapse" data-parent="#guideAccordion" id="iosGuide"
+                 th:with="feeduri=@{~/podcasts/feed.xml(feed=${feed.id})}, host=${#httpServletRequest.getServerName()}">
+                <div class="card-body" th:text="#{lectcast.help.ios.body}">
+                    Body
+                </div>
+                <img alt="QRCode"
+                     src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                     th:src="@{/podcasts/qrcode.png(feed=${feed.id}, type='podcast')}"/>
+                <div class="form-group mx-3">
+                    <label class="sr-only" for="iosFeedUrl" th:text="#{button.podcast_feed}">Feed</label>
+                    <div class="input-group mb-2 mr-sm-2">
+                        <input class="form-control" id="iosFeedUrl" th:value="|https://${host}${feeduri}|"
+                               type="text">
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+        <div class="card">
+            <div class="card-header" id="androidHeader">
+                <h3 class="mb-0">
+                    <i class="fab fa-fw fa-android"></i>
+                    <button aria-controls="androidGuide" aria-expanded="false" class="btn btn-link pl-0"
+                            data-target="#androidGuide" data-toggle="collapse" type="button">
+                        <span th:text="#{lectcast.help.android.title}">Title</span>
+                    </button>
+                </h3>
+            </div>
+            <div aria-labelledby="androidHeader" class="collapse" data-parent="#guideAccordion"
+                 id="androidGuide"
+                 th:with="feeduri=@{~/podcasts/feed.xml(feed=${feed.id})}, host=${#httpServletRequest.getServerName()}">
+                <div class="card-body" th:text="#{lectcast.help.android.body}">
+                    Body
+                </div>
+                <div class="form-group mx-3">
+                    <label class="sr-only" for="androidFeedUrl" th:text="#{button.podcast_feed}">Feed</label>
+                    <div class="input-group mb-2 mr-sm-2">
+                        <input class="form-control" id="androidFeedUrl" th:value="|https://${host}${feeduri}|"
+                               type="text">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="card">
-      <div class="card-header" id="androidHeader">
-        <h3 class="mb-0">
-          <i class="fab fa-fw fa-android"></i>
-          <button aria-controls="androidGuide" aria-expanded="false" class="btn btn-link pl-0"
-                  data-target="#androidGuide" data-toggle="collapse" type="button">
-            <span th:text="#{lectcast.help.android.title}">Title</span>
-          </button>
-        </h3>
-      </div>
-      <div aria-labelledby="androidHeader" class="collapse" data-parent="#guideAccordion"
-           id="androidGuide"
-           th:with="feeduri=@{~/podcasts/feed.xml(feed=${feed.id})}, host=${#httpServletRequest.getServerName()}">
-        <div class="card-body" th:text="#{lectcast.help.android.body}">
-          Body
-        </div>
-        <div class="form-group mx-3">
-          <label class="sr-only" for="androidFeedUrl" th:text="#{button.podcast_feed}">Feed</label>
-          <div class="input-group mb-2 mr-sm-2">
-            <input class="form-control" id="androidFeedUrl" th:value="|https://${host}${feeduri}|"
-                   type="text">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </main>
 
 <footer class="pt-3 my-md-3 pt-md-4 border-top">
-  <div class="container">
-    <div th:if="${isInstructor}">
-      <h2 class="mb-3" th:text="#{lectcast.management}">Management Tools</h2>
-      <div class="row">
-        <div class="col-12 col-sm-4 col-lg-3">
-          <h5 class="mb-0" th:text="#{lectcast.item.upload}">Upload an Item</h5>
-        </div>
-        <div class="col-12 col-sm-8 col-lg-9">
-          <form action="#" enctype="multipart/form-data" id="uploadForm" method="post"
-                th:action="@{/channels/item}">
-            <div class="mb-3">
-              <label for="itemFormTitle" th:text="#{lectcast.item.title.label}">Title</label>
-              <input class="form-control" id="itemFormTitle" name="title" required
-                     th:placeholder="#{lectcast.item.title.placeholder}" type="text">
-            </div>
-            <div class="mb-3">
-              <label for="itemFormDescription"
-                     th:text="#{lectcast.item.description.label}">Description</label>
-              <textarea class="form-control" id="itemFormDescription" name="description"
-                        rows="3"
-                        th:placeholder="#{lectcast.item.description.placeholder}"></textarea>
-            </div>
-            <div class="mb-3">
-              <div class="form-group">
-                <label for="itemFormAudioFile" th:text="#{lectcast.item.audio_file.label}">Audio
-                  File</label>
-                <input class="form-control-file" id="itemFormAudioFile" name="audioFile"
-                       required type="file">
-              </div>
-            </div>
-            <div class="mb-3">
-              <div class="form-group form-check">
-                <input checked class="form-check-input" id="itemFormIsInfinity"
-                       name="isInfinity" type="checkbox" value="1">
-                <label class="form-check-label" for="itemFormIsInfinity"
-                       th:text="#{lectcast.item.is_infinity.label}">Unlimited</label>
-              </div>
-              <div class="form-group">
-                <label for="itemFormDateFrom"
-                       th:text="#{lectcast.item.date_from.label}">From</label>
-                <div class="input-group date" data-target-input="nearest" id="datefrompicker">
-                  <input class="form-control datetimepicker-input" data-target="#datefrompicker"
-                         disabled
-                         id="itemFormDateFrom" name="dateFrom" type="text">
-                  <div class="input-group-append" data-target="#datefrompicker"
-                       data-toggle="datetimepicker">
-                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                  </div>
+    <div class="container">
+        <div th:if="${isInstructor}">
+            <h2 class="mb-3" th:text="#{lectcast.management}">Management Tools</h2>
+
+            <div class="row">
+                <div class="col-12 col-sm-4 col-lg-3">
+                    <h5 class="mb-0" th:text="#{lectcast.item.upload}">Upload an Item</h5>
                 </div>
-              </div>
+                <div class="col-12 col-sm-8 col-lg-9">
+                    <form action="#" enctype="multipart/form-data" id="uploadForm" method="post"
+                          th:action="@{/channels/item}" th:object="${itemForm}">
+
+                        <div class="mb-3">
+                            <label for="itemFormTitle" th:text="#{lectcast.item.title.label}">Title</label>
+                            <input class="form-control" id="itemFormTitle" name="title" th:required="required"
+                                   th:placeholder="#{lectcast.item.title.placeholder}" type="text" th:field="*{title}" th:errorclass="is-invalid">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}" >Title Error</div>
+
+
+                        </div>
+                        <div class="mb-3">
+                            <label for="itemFormDescription"
+                                   th:text="#{lectcast.item.description.label}" >Description</label>
+                            <textarea class="form-control" id="itemFormDescription" name="description"
+                                      rows="3"
+                                      th:placeholder="#{lectcast.item.description.placeholder}" th:field="*{description}" th:errorclass="is-invalid"></textarea>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-group">
+                                <label for="itemFormAudioFile" th:text="#{lectcast.item.audio_file.label}">Audio
+                                    File</label>
+                                <input class="form-control-file" id="itemFormAudioFile" name="audioFile"
+                                       th:required="required" type="file" th:field="*{audioFile}" th:errorclass="is-invalid">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('audioFile')}" th:errors="*{audioFile}" >AudioFile Error</div>
+                            </div>
+
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-group form-check">
+                                <input checked class="form-check-input" id="itemFormIsInfinity"
+                                       name="isInfinity" type="checkbox" value="1">
+                                <label class="form-check-label" for="itemFormIsInfinity"
+                                       th:text="#{lectcast.item.is_infinity.label}">Unlimited</label>
+                            </div>
+                            <div class="form-group">
+                                <label for="itemFormDateFrom"
+                                       th:text="#{lectcast.item.date_from.label}">From</label>
+                                <div class="input-group date" data-target-input="nearest" id="datefrompicker">
+                                    <input class="form-control datetimepicker-input" data-target="#datefrompicker"
+                                           disabled
+                                           id="itemFormDateFrom" name="dateFrom" type="text" th:errorclass="is-invalid">
+                                    <div class="input-group-append" data-target="#datefrompicker"
+                                         data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('dateFrom')}" th:errors="*{dateFrom}">dateFrom Error</div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-block" id="itemFormUploadButton"
+                                th:text="#{button.submit}" type="submit">
+                            Upload
+                        </button>
+                    </form>
+                </div>
             </div>
-            <button class="btn btn-primary btn-block" id="itemFormUploadButton"
-                    th:text="#{button.submit}" type="submit">
-              Upload
-            </button>
-          </form>
         </div>
-      </div>
     </div>
-  </div>
 </footer>
 
 <script crossorigin="anonymous"
@@ -234,76 +250,76 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js"></script>
 <script crossorigin="anonymous" src="https://kit.fontawesome.com/933e54be06.js"></script>
 <script th:inline="javascript" type="application/javascript">
-  /*<![CDATA[*/
-  const message_delete_confirm = /*[[#{lectcast.item.delete.confirm}]]*/ 'Confirm';
-  const message_delete_cancelled = /*[[#{lectcast.item.delete.cancelled}]]*/ 'Cancelled';
-  const message_delete_failed = /*[[#{lectcast.item.delete.failed}]]*/ 'Failed';
-  const message_uploading = /*[[#{lectcast.item.upload.message}]]*/ 'Uploading...';
-  /*]]>*/
+    /*<![CDATA[*/
+    const message_delete_confirm = /*[[#{lectcast.item.delete.confirm}]]*/ 'Confirm';
+    const message_delete_cancelled = /*[[#{lectcast.item.delete.cancelled}]]*/ 'Cancelled';
+    const message_delete_failed = /*[[#{lectcast.item.delete.failed}]]*/ 'Failed';
+    const message_uploading = /*[[#{lectcast.item.upload.message}]]*/ 'Uploading...';
+    /*]]>*/
 
-  $(function () {
-    $('#datefrompicker').datetimepicker({
-      locale: 'ja',
-      format: 'YYYY/MM/DD HH:mm'
+    $(function () {
+        $('#datefrompicker').datetimepicker({
+            locale: 'ja',
+            format: 'YYYY/MM/DD HH:mm'
+        });
+        $('#datetopicker').datetimepicker({
+            locale: 'ja',
+            format: 'YYYY/MM/DD HH:mm'
+        });
     });
-    $('#datetopicker').datetimepicker({
-      locale: 'ja',
-      format: 'YYYY/MM/DD HH:mm'
+
+    $('#itemFormIsInfinity').click(function (event) {
+        if (event.currentTarget.checked) {
+            document.getElementById('itemFormDateFrom').disabled = true;
+        } else {
+            document.getElementById('itemFormDateFrom').disabled = false;
+        }
     });
-  });
 
-  $('#itemFormIsInfinity').click(function (event) {
-    if (event.currentTarget.checked) {
-      document.getElementById('itemFormDateFrom').disabled = true;
-    } else {
-      document.getElementById('itemFormDateFrom').disabled = false;
-    }
-  });
+    $('article a.delete-item').click(function (event) {
+        const itemId = event.currentTarget.dataset['value'];
+        const url = /*[[@{/channels/item}]]*/ '#';
+        if (!confirm(message_delete_confirm)) {
+            alert(message_delete_cancelled)
+            return false;
+        } else {
+            $.ajax({
+                url: url + '/' + itemId,
+                type: 'DELETE'
+            }).then(
+                function () {
+                    location.reload();
+                },
+                function () {
+                    alert(message_delete_failed)
+                }
+            )
+        }
+    });
 
-  $('article a.delete-item').click(function (event) {
-    const itemId = event.currentTarget.dataset['value'];
-    const url = /*[[@{/channels/item}]]*/ '#';
-    if (!confirm(message_delete_confirm)) {
-      alert(message_delete_cancelled)
-      return false;
-    } else {
-      $.ajax({
-        url: url + '/' + itemId,
-        type: 'DELETE'
-      }).then(
-          function () {
-            location.reload();
-          },
-          function () {
-            alert(message_delete_failed)
-          }
-      )
-    }
-  });
+    $('#itemFormUploadButton').click(function (event) {
+        $(this).prop("disabled", true);
+        $('#uploadForm').submit();
+        $(this).html('<span class="spinner-border" role="status" aria-hidden="true"></span> '
+            + message_uploading);
+    });
 
-  $('#itemFormUploadButton').click(function (event) {
-    $(this).prop("disabled", true);
-    $('#uploadForm').submit();
-    $(this).html('<span class="spinner-border" role="status" aria-hidden="true"></span> '
-        + message_uploading);
-  });
-
-  document.addEventListener('DOMContentLoaded', function () {
-    const audios = document.getElementsByTagName('audio');
-    for (let i = 0; i < audios.length; i++) {
-      audios[i].addEventListener('error', function (event) {
-        event.target.style.display = 'none';
-        event.target.nextElementSibling.style.removeProperty('display');
-        setTimeout(function retry() {
-          event.target.load();
-        }, 5000);
-      }, false);
-      audios[i].addEventListener('loadeddata', function (event) {
-        event.target.style.removeProperty('display');
-        event.target.nextElementSibling.style.display = 'none';
-      }, false);
-    }
-  });
+    document.addEventListener('DOMContentLoaded', function () {
+        const audios = document.getElementsByTagName('audio');
+        for (let i = 0; i < audios.length; i++) {
+            audios[i].addEventListener('error', function (event) {
+                event.target.style.display = 'none';
+                event.target.nextElementSibling.style.removeProperty('display');
+                setTimeout(function retry() {
+                    event.target.load();
+                }, 5000);
+            }, false);
+            audios[i].addEventListener('loadeddata', function (event) {
+                event.target.style.removeProperty('display');
+                event.target.nextElementSibling.style.display = 'none';
+            }, false);
+        }
+    });
 </script>
 </body>
 </html>

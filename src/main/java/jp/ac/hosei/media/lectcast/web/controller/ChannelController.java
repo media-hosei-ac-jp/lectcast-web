@@ -30,6 +30,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -152,8 +154,8 @@ public class ChannelController {
   }
 
   @PostMapping("item")
-  public String handleItemUpload(final ItemForm itemForm, final HttpSession httpSession,
-      final UriComponentsBuilder builder, final Model model) {
+  public String handleItemUpload(@Validated ItemForm itemForm, BindingResult result, final HttpSession httpSession,
+                                 final UriComponentsBuilder builder, final Model model) {
     final LectcastSession lectcastSession = (LectcastSession) httpSession.getAttribute("lectcast");
     if (null == lectcastSession) {
       // 401 Unauthorized
@@ -169,6 +171,13 @@ public class ChannelController {
       return "error";
     }
 
+    if (result.hasErrors()){
+      System.out.println(result);
+      model.addAttribute("errors",result);
+      return index(httpSession,model);
+
+    }
+
     final String originalFileName = itemForm.getAudioFile().getOriginalFilename();
     assert originalFileName != null : "The original filename must be set.";
     final String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
@@ -179,6 +188,8 @@ public class ChannelController {
       model.addAttribute("additional_message", "lectcast.error.file_type_is_not_supported");
       return "error";
     }
+
+
 
     final Item item = new Item();
     final String key = amazonS3Service.generateKey();

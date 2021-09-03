@@ -1,21 +1,29 @@
 package jp.ac.hosei.media.lectcast.web.form;
 
 import java.util.Date;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
+
+import jp.ac.hosei.media.lectcast.web.validator.AudioType;
+import jp.ac.hosei.media.lectcast.web.validator.FileRequired;
 import org.springframework.web.multipart.MultipartFile;
 
 public class ItemForm {
 
-  @NotNull
+  @AudioType
+  @FileRequired
   private MultipartFile audioFile;
 
-  @NotNull
+  @Size(max=255)
+  @NotEmpty
   private String title;
 
+  @Size(max=4096)
   private String description;
 
+  @NotNull
   private String isInfinity;
 
+  @Future
   private Date dateFrom;
 
   private Date dateTo;
