@@ -17,7 +17,6 @@ public class AudioTypeValidator implements ConstraintValidator<AudioType, Multip
         final String[] supportType = {"mp3","m4a","wma"};
 
         if(Arrays.asList(supportType).contains(contentName.substring( contentName.length() -3 ))){
-
             return true;
         }
 
