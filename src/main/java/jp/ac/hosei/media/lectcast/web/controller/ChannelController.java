@@ -171,18 +171,12 @@ public class ChannelController {
       return "error";
     }
 
-    if (result.hasErrors()){
-      System.out.println(result);
-      model.addAttribute("errors",result);
-      return index(httpSession,model);
-
-    }
-
     final String originalFileName = itemForm.getAudioFile().getOriginalFilename();
     assert originalFileName != null : "The original filename must be set.";
     final String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
     final String fileName = originalFileName
         .substring(0, originalFileName.length() - (extension.length() + 1));
+
     if (!containsExtension(extension)) {
       model.addAttribute("error", "Unsupported FileType");
       model.addAttribute("additional_message", "lectcast.error.file_type_is_not_supported");
@@ -201,6 +195,7 @@ public class ChannelController {
     } else {
       // Limited
       item.setIsInfinity(0);
+      System.out.println("--set-isInfinity-0");
       item.setDateFrom(itemForm.getDateFrom());
       if (null != itemForm.getDateTo()) {
         final Calendar dateToCalendar = Calendar.getInstance();
@@ -210,9 +205,20 @@ public class ChannelController {
       }
     }
 
+    System.out.println("---ended-processing-and-ready-for-upload");
+
+    System.out.println("--process-form-error");
+    if (result.hasErrors()){
+      model.addAttribute("errors",result);
+      System.out.println(result.getAllErrors());
+      return index(httpSession,model);
+    }
+    System.out.println("--ended-process-form-error");
+
     File originalFile = null;
     try {
       // Create a temporary file
+      System.out.println("----start-convert--");
       final Path tmpPath = Files.createTempFile(Paths.get("/tmp"), "lectcast_", "." + extension);
       originalFile = tmpPath.toFile();
 
