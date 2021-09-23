@@ -335,7 +335,12 @@
         errorElement: 'div',
         errorPlacement: function (error, element) {
             error.addClass("invalid-feedback");
-            error.insertAfter(element);
+            if(element.attr("name")=="dateFrom"){
+                error.insertAfter("#datefrompicker");
+            }else{
+                error.insertAfter(element);
+            }
+
         },
         rules: {
             title: {
@@ -373,8 +378,6 @@
             }
         }
     });
-
-
 
     document.addEventListener('DOMContentLoaded', function () {
         const audios = document.getElementsByTagName('audio');
