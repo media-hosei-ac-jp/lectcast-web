@@ -5,6 +5,13 @@ plugins {
     id 'io.freefair.lombok' version '5.0.0'
 }
 
+//log4j(CVE-2021-4428 fix)
+ext['log4j2.version'] = '2.15.0'
+dependencies {
+    implementation platform('org.apache.logging.log4j:log4j-bom:2.15.0')
+}
+//
+
 group = 'jp.ac.hosei.media.lectcast'
 version = '1.0.0-SNAPSHOT'
 sourceCompatibility = '11'
