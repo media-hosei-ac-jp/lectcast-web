@@ -31,7 +31,8 @@
 <main class="py-3">
     <div class="container">
         <div class="alert alert-info" role="alert">
-            <a class="text-info" th:text="#{lectcast.info.service_end_message}" rel="noopener" target="_blank"  href="https://www.hosei.ac.jp/media/info/article-20210715112537/"> Service End Message</a>
+            <a class="text-info" th:text="#{lectcast.info.service_end_message}" rel="noopener" target="_blank"
+               href="https://www.hosei.ac.jp/media/info/article-20210715112537/"> Service End Message</a>
         </div>
     </div>
     <div class="container" th:if="${! #lists.isEmpty(itemList)}">
@@ -175,18 +176,24 @@
                         <div class="mb-3">
                             <label for="itemFormTitle" th:text="#{lectcast.item.title.label}">Title</label>
                             <input class="form-control" id="itemFormTitle" name="title" th:required="required"
-                                   th:placeholder="#{lectcast.item.title.placeholder}" type="text" th:field="*{title}" th:errorclass="is-invalid">
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}" >Title Error</div>
+                                   th:placeholder="#{lectcast.item.title.placeholder}" type="text" th:field="*{title}"
+                                   th:errorclass="is-invalid">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
+                                Title Error
+                            </div>
 
 
                         </div>
                         <div class="mb-3">
                             <label for="itemFormDescription"
-                                   th:text="#{lectcast.item.description.label}" >Description</label>
+                                   th:text="#{lectcast.item.description.label}">Description</label>
                             <textarea class="form-control" id="itemFormDescription" name="description"
                                       rows="3"
-                                      th:placeholder="#{lectcast.item.description.placeholder}" th:field="*{description}" th:errorclass="is-invalid"></textarea>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</div>
+                                      th:placeholder="#{lectcast.item.description.placeholder}"
+                                      th:field="*{description}" th:errorclass="is-invalid"></textarea>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}"
+                                 th:errors="*{description}">Description Error
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -194,8 +201,11 @@
                                 <label for="itemFormAudioFile" th:text="#{lectcast.item.audio_file.label}">Audio
                                     File</label>
                                 <input class="form-control-file" id="itemFormAudioFile" name="audioFile"
-                                       th:required="required" type="file" th:field="*{audioFile}" th:errorclass="is-invalid">
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('audioFile')}" th:errors="*{audioFile}" >AudioFile Error</div>
+                                       th:required="required" type="file" th:field="*{audioFile}"
+                                       th:errorclass="is-invalid">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('audioFile')}"
+                                     th:errors="*{audioFile}">AudioFile Error
+                                </div>
                             </div>
 
                         </div>
@@ -217,7 +227,9 @@
                                          data-toggle="datetimepicker">
                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                     </div>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('dateFrom')}" th:errors="*{dateFrom}">dateFrom Error</div>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('dateFrom')}"
+                                         th:errors="*{dateFrom}">dateFrom Error
+                                    </div>
                                 </div>
 
                             </div>
@@ -249,6 +261,7 @@
         integrity="sha512-2JBCbWoMJPH+Uj7Wq5OLub8E5edWHlTM4ar/YJkZh3plwB2INhhOC3eDoqHm1Za/ZOSksrLlURLoyXVdfQXqwg=="
         src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js"></script>
 <script crossorigin="anonymous" src="https://kit.fontawesome.com/933e54be06.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
 <script th:inline="javascript" type="application/javascript">
     /*<![CDATA[*/
     const message_delete_confirm = /*[[#{lectcast.item.delete.confirm}]]*/ 'Confirm';
@@ -297,11 +310,73 @@
         }
     });
 
+
     $('#itemFormUploadButton').click(function (event) {
         $(this).prop("disabled", true);
-        $('#uploadForm').submit();
-        $(this).html('<span class="spinner-border" role="status" aria-hidden="true"></span> '
-            + message_uploading);
+        if ($('#uploadForm').valid()) {
+            $('#uploadForm').submit();
+            $(this).html('<span class="spinner-border" role="status" aria-hidden="true"></span> '
+                + message_uploading);
+        } else {
+            $(this).prop("disabled", false);
+        }
+
+    });
+
+    $.validator.addMethod("afterNow",
+        function (value, element) {
+            return moment(new Date()).format("YYYY/MM/DD HH:mm") < $('#itemFormDateFrom').val()
+        },
+        "開始日時は現在より未来にしてください。"
+    );
+
+    $('#uploadForm').validate({
+        errorClass: 'is-invalid',
+        errorElement: 'div',
+        errorPlacement: function (error, element) {
+            error.addClass("invalid-feedback");
+            if(element.attr("name")=="dateFrom"){
+                error.insertAfter("#datefrompicker");
+            }else{
+                error.insertAfter(element);
+            }
+
+        },
+        rules: {
+            title: {
+                required: true,
+                maxlength: 255,
+
+            },
+            audioFile: {
+                required: true,
+            },
+            dateFrom: {
+                required: function () {
+                    if ($('#itemFormIsInfinity').prop("checked")) {
+                        return true;
+                    }
+                    return false;
+                },
+                afterNow: function () {
+                    if ($('#itemFormIsInfinity').prop("checked")) {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+
+
+        },
+        messages: {
+            title: {
+                required: '授業タイトルは必須です',
+                maxlength: '授業タイトルは255字以内でご入力ください。',
+            },
+            audioFile: {
+                required: 'ファイルは必須です'
+            }
+        }
     });
 
     document.addEventListener('DOMContentLoaded', function () {

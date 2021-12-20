@@ -171,18 +171,12 @@ public class ChannelController {
       return "error";
     }
 
-    if (result.hasErrors()){
-      System.out.println(result);
-      model.addAttribute("errors",result);
-      return index(httpSession,model);
-
-    }
-
     final String originalFileName = itemForm.getAudioFile().getOriginalFilename();
     assert originalFileName != null : "The original filename must be set.";
     final String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
     final String fileName = originalFileName
         .substring(0, originalFileName.length() - (extension.length() + 1));
+
     if (!containsExtension(extension)) {
       model.addAttribute("error", "Unsupported FileType");
       model.addAttribute("additional_message", "lectcast.error.file_type_is_not_supported");
@@ -208,6 +202,12 @@ public class ChannelController {
         dateToCalendar.add(Calendar.SECOND, 59);
         item.setDateTo(dateToCalendar.getTime());
       }
+    }
+
+    if (result.hasErrors()){
+      model.addAttribute("errors",result);
+      System.out.println(result.getAllErrors());
+      return index(httpSession,model);
     }
 
     File originalFile = null;

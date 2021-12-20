@@ -17,10 +17,9 @@ public class ItemForm {
   @NotEmpty
   private String title;
 
-  @Size(max=4096)
+  @Size(max=2048)
   private String description;
 
-  @NotNull
   private String isInfinity;
 
   @Future
