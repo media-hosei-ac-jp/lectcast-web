@@ -213,7 +213,8 @@ public class ChannelController {
     File originalFile = null;
     try {
       // Create a temporary file
-      final Path tmpPath = Files.createTempFile(Paths.get("/tmp"), "lectcast_", "." + extension);
+      final String tmpdir = System.getProperty( "java.io.tmpdir" );
+      final Path tmpPath = Files.createTempFile(Paths.get(tmpdir), "lectcast_", "." + extension);
       originalFile = tmpPath.toFile();
 
       // Write the temporary audio file
